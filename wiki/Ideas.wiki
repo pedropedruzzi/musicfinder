@@ -1,0 +1,10 @@
+= Idéias =
+
+== Gerais ==
+ * Montar um repositório MIDI com musicas conhecidas e fáceis de cantar;
+ * Gravar amostras de audio com voz ou violão de trechos destas;
+ * Fazer um algorítmo para encontrar o track de melodia mais provável automaticamente;
+
+== Matching ==
+ * Tentar adivinhar a divisão temporal da amostra e comparar com figuras ritmicas;
+ * Fazer uma comparação que não dependa dos eventos exatos, e sim das alturas ao longo do tempo;
