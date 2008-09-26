@@ -5,18 +5,16 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
+import org.apache.log4j.Logger;
 
 public class SoundTrackExtractor {
-
-	private static final int NOTE_ON = 9;
-	private static final int NOTE_OFF = 8;
-
-	private static final int SILENCE = -1;
-	private static final int NO_KEY = -2;
+	
 	private static final boolean DO_NOT_IGNORE = true;
 	
+	private Logger logger = Logger.getLogger(Test.class);
+
 	private Sequence sequence;
-	private int pKey = NO_KEY;
+	private int pKey = SoundTrack.NO_KEY;
 	private long start = 0;
 	
 	private int ignored = 0;
@@ -26,17 +24,22 @@ public class SoundTrackExtractor {
 	
 	private long curTick = 0;
 
-	SoundTrack soundTrack = new SoundTrack();
+	private SoundTrack soundTrack;
 	
 	public Sequence getSequence() { return sequence; }
 	
 	public SoundTrackExtractor(Sequence sequence) {
 		this.sequence = sequence;
+		this.soundTrack = new SoundTrack(sequence.getResolution());
 	}
 
 	public SoundTrack extract(int trackNumber) {
 		
 		Track track = this.sequence.getTracks()[trackNumber];
+
+		logger.debug("Track " + trackNumber);
+		logger.debug("# events=" + track.size());
+		logger.debug("# ticks=" + track.ticks());
 
 		byte status = 0;
 		for (int i = 0; i < track.size(); i++) {
@@ -56,13 +59,14 @@ public class SoundTrackExtractor {
 			int type = (status>>4) & 0xf;
 			
 			switch (type) {
-				case NOTE_ON:
+				case MidiUtils.NOTE_ON:
 					noteOn(tick, status & 0xf, msgData[s], msgData[s+1]);
 					break;
-				case NOTE_OFF:
+				case MidiUtils.NOTE_OFF:
 					noteOff(tick, status & 0xf, msgData[s], msgData[s+1]);
 					break;
 				default: invalid++;
+				logger.debug("Unkown message type! status=" + status + " type=" + type);
 			}
 		}
 		
@@ -75,7 +79,7 @@ public class SoundTrackExtractor {
 	}
 	
 	private void noteOn(long tick, int channel, int key, int velocity) {
-		if (pKey != NO_KEY) {
+		if (pKey != SoundTrack.NO_KEY) {
 			if (key == pKey) {
 				// second note on
 				noteOff(tick, channel, key, velocity);
@@ -84,12 +88,14 @@ public class SoundTrackExtractor {
 					noteOff(tick, channel, pKey, velocity); // channel e velocity estão invalidos!
 					noteOn(tick, channel, key, velocity);
 				} else {
+					logger.debug("Ignoring Note On event. tick=" + tick + ". key=" + key);
 					ignored++;
 				}
 			}
 		} else {
 			pKey = key;
 			start = tick;
+			logger.debug(">>>>>>>>>>Begin note event!! key=" + pKey + ". velocity=" + velocity);
 			if (velocity == 0) {
 				noteOff(tick, channel, key, velocity);
 			}
@@ -99,8 +105,9 @@ public class SoundTrackExtractor {
 	private void noteOff(long tick, int channel, int key, int velocity) {
 		if (key == pKey) {
 			postNote(key, start, tick);
+			logger.debug("<<<<<<<<<<End note event!! duration=" + (tick - start));
 			added++;
-			pKey = NO_KEY;
+			pKey = SoundTrack.NO_KEY;
 		}
 	}
 
@@ -112,7 +119,7 @@ public class SoundTrackExtractor {
 		
 		if (curTick < start) {
 			Note silence = new Note();
-			silence.setKey(SILENCE);
+			silence.setKey(SoundTrack.SILENCE);
 			silence.setDuration((int) (start - curTick));
 			
 			soundTrack.addNote(silence);
