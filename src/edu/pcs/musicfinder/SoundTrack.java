@@ -2,6 +2,7 @@ package edu.pcs.musicfinder;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -16,31 +17,50 @@ import org.jfree.ui.RefineryUtilities;
 
 
 public class SoundTrack {
+
+	public static final int SILENCE = -1;
+	public static final int NO_KEY = -2;
 	
 	public static int divider = 200;
-	private SortedMap<Integer, Note> notes = new TreeMap<Integer, Note>();
-
-	public SortedMap<Integer, Note> getNotes() { return notes; }
 	
-	public void addNote(Note note) {
-		this.notes.put(note.getTick(), note);
-	}
+	private List<Note> notes = new LinkedList<Note>();
+	private SortedMap<Integer, Note> noteMap = new TreeMap<Integer, Note>();
+	private int resolution = 120;
 	
 	public SoundTrack() {
+		
 	}
 	
 	private SoundTrack(SortedMap<Integer, Note> notes) {
-		this.notes = notes;
+		this.noteMap = notes;
 	}
 	
+	public SoundTrack(int resolution) {
+		this.resolution = resolution;
+	}
+
+	public SoundTrack(int resolution, List<Note> notes) {
+		this.resolution = resolution;
+		this.notes = notes;
+	}
+
+	public List<Note> getNotes() { return notes; }
+	public SortedMap<Integer, Note> getNoteMap() { return noteMap; }
+	public int getResolution() { return resolution; }
+	
+	public void addNote(Note note) {
+		this.notes.add(note);
+		this.noteMap.put(note.getTick(), note);
+	}
+
 	public int getLength() {
-		return this.notes.lastKey() - this.notes.firstKey();
+		return this.noteMap.lastKey() - this.noteMap.firstKey();
 	}
 	
 	public boolean isSame(SoundTrack track) {
 		
-		List<Note> mySequence = new ArrayList<Note>(this.notes.values());
-		List<Note> trackSequence = new ArrayList<Note>(track.notes.values());
+		List<Note> mySequence = new ArrayList<Note>(this.noteMap.values());
+		List<Note> trackSequence = new ArrayList<Note>(track.noteMap.values());
 		
 		for (int i = 0; i < mySequence.size(); i++) {
 			
@@ -54,8 +74,8 @@ public class SoundTrack {
 	}
 	
 	public boolean contains(SoundTrack track) {
-		for (int tick : track.notes.keySet()) {
-			SoundTrack window = new SoundTrack(this.notes.subMap(tick, tick + track.getLength()));
+		for (int tick : track.noteMap.keySet()) {
+			SoundTrack window = new SoundTrack(this.noteMap.subMap(tick, tick + track.getLength()));
 			if (window.isSame(track)) return true;
 		}
 		
@@ -63,16 +83,16 @@ public class SoundTrack {
 	}
 	
 	public SoundTrack subStrack(int startTick, int endTick) {
-		return new SoundTrack(this.notes.subMap(startTick, endTick));
+		return new SoundTrack(this.noteMap.subMap(startTick, endTick));
 	}
 	
 	public void printTextChart(PrintStream stream) {
 		
 		Map<Integer, StringBuilder> lines = new TreeMap<Integer, StringBuilder>();
 		
-		int totalLength = this.getLength() + this.notes.get(this.notes.lastKey()).getDuration() / divider;
+		int totalLength = this.getLength() + this.noteMap.get(this.noteMap.lastKey()).getDuration() / divider;
 		
-		for (Note note : this.notes.values()) {
+		for (Note note : this.noteMap.values()) {
 			if (!lines.containsKey(note.getKey()))
 				lines.put(note.getKey(), new StringBuilder(StringUtils.repeat("-", totalLength)));
 			
@@ -90,7 +110,7 @@ public class SoundTrack {
 	public void showChart() {
 		
 		TimeSeries series = new TimeSeries("xxxxx", FixedMillisecond.class);
-		for (Note note : this.notes.values())
+		for (Note note : this.noteMap.values())
 			for (int i = 0;  i < note.getDuration(); i++)
 				series.add(new FixedMillisecond(note.getTick() + i), note.getKey());
 				    	
@@ -104,7 +124,7 @@ public class SoundTrack {
 	}
 	
 	public void printData(PrintStream stream) {
-		for (Note note : this.notes.values()) {
+		for (Note note : this.noteMap.values()) {
 			for (int i = 0; i < note.getDuration(); i++)
 				stream.println(String.format("%s %s", note.getTick() + i, note.getKey()));
 		}		
