@@ -17,9 +17,6 @@ import org.jfree.ui.RefineryUtilities;
 
 
 public class SoundTrack {
-
-	public static final int SILENCE = -1;
-	public static final int NO_KEY = -2;
 	
 	public static int divider = 200;
 	
