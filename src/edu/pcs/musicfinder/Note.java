@@ -1,6 +1,9 @@
 package edu.pcs.musicfinder;
 
 public class Note {
+
+	public static final int SILENCE = -1;
+	public static final int NO_KEY = -2;
 	
 	private int key;
 	private int duration;
