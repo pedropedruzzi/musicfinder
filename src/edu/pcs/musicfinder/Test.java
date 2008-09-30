@@ -2,8 +2,12 @@ package edu.pcs.musicfinder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
@@ -41,33 +45,116 @@ public class Test {
 	
 	public static void main(String[] args) {
 		Test t = new Test();
+		t.loadRepository();
 //		t.extractTrack("ode_to_joy", 1);
 //		t.extractTrack("hey_jude", 1);
 //		t.extractTrack("penny_lane", 4); piano
 //		t.extractTrack("penny_lane", 6); baixo
 //		t.extractTrack("penny_lane", 2);
-		List<RealNote> st = t.extractTrack("yesterday", 3);
-		st = modify(st, 100, 16);
-		//st = removeSilence(st);
-		t.recordNotes(st, "yesterday", 4);
+		List<RealNote> track = t.extractTrack("yesterday", 3);
+		track = removeSilence(track);
+		
+		List<RealNote> part = copyPart(track, 21, 8); //copyPart(track, 100, 16);
+		modify(part);
+		
+		search(track, part);
+		
+		t.recordNotes(part, "yesterday", 4);
 	}
 	
-	private static List<RealNote> modify(List<RealNote> st, int start, int length) {
+	private SongRepository loadRepository() {
+		SongRepository repo = new SongRepository();
+		repo.addSong(new Song(new SongMetadata("Ludwig van Beethoven", "Symphony No. 9 in D minor, Op. 125 'Choral'", "Ode To Joy", 1824), Collections.singleton(new MelodyLine(extractTrack("ode_to_joy", 1)))));
+		repo.addSong(new Song(new SongMetadata("The Beatles", "Hey Jude", "Hey Jude", 1968), Collections.singleton(new MelodyLine(extractTrack("hey_jude", 1)))));
+		repo.addSong(new Song(new SongMetadata("The Beatles", "Penny Lane"), Collections.singleton(new MelodyLine(extractTrack("penny_lane", 2)))));
+		repo.addSong(new Song(new SongMetadata("The Beatles", "Help!", "Yesterday", 1965), Collections.singleton(new MelodyLine(extractTrack("yesterday", 3)))));
+		return repo;
+	}
+	
+	private static void search(SongRepository repo, MelodyLine line, MatchSet matches) {
+		
+	}
+
+	private static double search(List<RealNote> track, List<RealNote> part) {
+		int partSize = part.size();
+		int max = track.size() - partSize;
+		
+		double minDistance = Double.MAX_VALUE;
+		int position = -1;
+		
+		for (int start = 0; start <= max; start++) {
+			double d = distance(track.subList(start, start + partSize), part);
+			logger.debug("start = " + start);
+			logger.debug("d = " + d);
+			if (d < minDistance) {
+				minDistance = d;
+				position = start;
+			}
+		}
+		
+		logger.debug("minDistance = " + minDistance);
+		logger.debug("position = " + position);
+		
+		return minDistance;
+	}
+	
+	private static double distance(List<RealNote> x, List<RealNote> y) {
+		if (x.size() != y.size()) throw new IllegalArgumentException("different sizes");
+		
+		// y = a.x
+		double xy = 0;
+		double xx = 0;
+		
+		Iterator<RealNote> itX = x.iterator();
+		Iterator<RealNote> itY = y.iterator();
+		
+		while (itX.hasNext()) {
+			double dX = itX.next().getDuration();
+			double dY = itY.next().getDuration();
+			logger.debug("x = " + dX);
+			logger.debug("y = " + dY);
+			xy += dX * dY;
+			xx += dX * dX;
+		}
+		
+		double a = xy / xx;
+		logger.debug("a = " + a);
+		
+		itX = x.iterator();
+		itY = y.iterator();
+		
+		double distance = 0;
+		
+		while (itX.hasNext()) {
+			double dX = itX.next().getDuration();
+			double dY = itY.next().getDuration();
+			distance += (dY - a * dX) * (dY - a * dX);
+		}
+		
+		return distance;
+	}
+	
+	private static void modify(List<RealNote> st) {
 		final double durAbs = 1.1;
-		final double durRel = 0.1;
+		final double durRel = 0.3;
 		final double keyAbs = Math.pow(2, 1/6);
 		final double keyRel = Math.pow(2, 1/12) - 1;
-		List<RealNote> notes = st.subList(start, start + length);
 		
-		for (RealNote n : notes) {
-			System.out.println(n.getPitch());
+		for (RealNote n : st) {
 			n.setDuration(n.getDuration()*durAbs + (Math.random()-0.5)*durRel);
 			
 			if (n.getPitch() != RealNote.SILENCE)
 				n.setPitch(n.getPitch()*keyAbs*((Math.random()-0.5)*keyRel + 1));
 		}
+	}
+	
+	private static List<RealNote> copyPart(List<RealNote> st, int start, int length) {
+		List<RealNote> parte = st.subList(start, start + length);
+		List<RealNote> nova = new LinkedList<RealNote>();
 		
-		return notes;
+		for (RealNote n : parte) nova.add(n.clone());
+		
+		return nova;
 	}
 	
 	private static List<RealNote> removeSilence(List<RealNote> st) {
