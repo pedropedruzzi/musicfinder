@@ -31,4 +31,9 @@ public class RealNote {
 		
 		return this.pitch == note.pitch && this.duration == note.duration;
 	}
+	
+	@Override
+	protected RealNote clone() {
+		return new RealNote(getPitch(), getDuration());
+	}
 }
