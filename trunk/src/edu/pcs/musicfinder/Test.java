@@ -51,6 +51,7 @@ public class Test {
 //		t.extractTrack("penny_lane", 4); piano
 //		t.extractTrack("penny_lane", 6); baixo
 //		t.extractTrack("penny_lane", 2);
+//		t.extractTrack("my_heart_will_go_on_track", 5);
 		List<RealNote> track = t.extractTrack("yesterday", 3);
 		track = removeSilence(track);
 		
@@ -83,7 +84,7 @@ public class Test {
 		int position = -1;
 		
 		for (int start = 0; start <= max; start++) {
-			double d = distance(track.subList(start, start + partSize), part);
+			double d = pitchDistance(track.subList(start, start + partSize), part);
 			logger.debug("start = " + start);
 			logger.debug("d = " + d);
 			if (d < minDistance) {
@@ -134,11 +135,46 @@ public class Test {
 		return distance;
 	}
 	
+	private static double pitchDistance(List<RealNote> x, List<RealNote> y) {
+		if (x.size() != y.size()) throw new IllegalArgumentException("different sizes");
+		
+		// ln(y) = ln(x) + c
+		double sum = 0;
+		
+		Iterator<RealNote> itX = x.iterator();
+		Iterator<RealNote> itY = y.iterator();
+		
+		while (itX.hasNext()) {
+			double dX = itX.next().getPitch();
+			double dY = itY.next().getPitch();
+			logger.debug("x = " + dX);
+			logger.debug("y = " + dY);
+			sum += Math.log(dY / dX);
+		}
+		
+		double c = sum / x.size();
+		logger.debug("c = " + c);
+		logger.debug("c = " + 12 * c / Math.log(2) + " semitons");
+		
+		itX = x.iterator();
+		itY = y.iterator();
+		
+		double distance = 0;
+		
+		while (itX.hasNext()) {
+			double dX = itX.next().getPitch();
+			double dY = itY.next().getPitch();
+			distance += (Math.log(dX / dY) + c) * (Math.log(dX / dY) + c);
+		}
+		
+		return distance;
+	}
+	
 	private static void modify(List<RealNote> st) {
 		final double durAbs = 1.1;
 		final double durRel = 0.3;
-		final double keyAbs = Math.pow(2, 1/6);
-		final double keyRel = Math.pow(2, 1/12) - 1;
+		final double keyAbs = Math.pow(2, 1d/6);
+		final double keyRel = Math.pow(2, 1d/12) - 1;
 		
 		for (RealNote n : st) {
 			n.setDuration(n.getDuration()*durAbs + (Math.random()-0.5)*durRel);
