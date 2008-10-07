@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -171,16 +172,19 @@ public class Test {
 	}
 	
 	private static void modify(List<RealNote> st) {
+		final Random rnd = new Random();
 		final double durAbs = 1.1;
 		final double durRel = 0.3;
-		final double keyAbs = Math.pow(2, 1d/6);
-		final double keyRel = Math.pow(2, 1d/12) - 1;
+		final double pitchFix = 3.0;
+		final double pitchVar = 0.5;
 		
 		for (RealNote n : st) {
-			n.setDuration(n.getDuration()*durAbs + (Math.random()-0.5)*durRel);
+			n.setDuration(n.getDuration()*durAbs + rnd.nextGaussian()*durRel);
 			
-			if (n.getPitch() != RealNote.SILENCE)
-				n.setPitch(n.getPitch()*keyAbs*((Math.random()-0.5)*keyRel + 1));
+			if (n.getPitch() != RealNote.SILENCE) {
+				double semitones = pitchFix + pitchVar * rnd.nextGaussian();
+				n.setPitch(n.getPitch() * Math.pow(2, semitones / 12));
+			}
 		}
 	}
 	
