@@ -1,14 +1,13 @@
 package edu.pcs.musicfinder;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
@@ -44,24 +43,30 @@ public class Test {
 		return extractor.extractReal(trackNumber);
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		Test t = new Test();
-		t.loadRepository();
-//		t.extractTrack("ode_to_joy", 1);
-//		t.extractTrack("hey_jude", 1);
-//		t.extractTrack("penny_lane", 4); piano
-//		t.extractTrack("penny_lane", 6); baixo
-//		t.extractTrack("penny_lane", 2);
-//		t.extractTrack("my_heart_will_go_on_track", 5);
-		List<RealNote> track = t.extractTrack("yesterday", 3);
-		track = removeSilence(track);
+		RedderTrackFileParser parser = new RedderTrackFileParser();
 		
-		List<RealNote> part = copyPart(track, 21, 8); //copyPart(track, 100, 16);
-		modify(part);
+		List<RealNote> track = parser.parse("resource/pitchs.txt");
 		
-		search(track, part);
+		//modify(track, 2, 0, 0, 0);
 		
-		t.recordNotes(part, "yesterday", 4);
+		t.recordNotes(track, "redder", 1);
+	}
+	
+	public static void mainOld(String[] args) {
+		Test t = new Test();
+		//t.loadRepository();
+		List<RealNote> track = t.extractTrack("teste", 0);
+		//track = removeSilence(track);
+		
+		//List<RealNote> part = copyPart(track, 21, 8); //copyPart(track, 100, 16);
+		//modify(part);
+		modify(track);
+		
+		//search(track, part);
+		
+		t.recordNotes(track, "yesterday", 4);
 	}
 	
 	private SongRepository loadRepository() {
@@ -172,14 +177,20 @@ public class Test {
 	}
 	
 	private static void modify(List<RealNote> st) {
-		final Random rnd = new Random();
 		final double durAbs = 1.1;
-		final double durRel = 0.3;
+		final double durRel = 0.01;
 		final double pitchFix = 3.0;
 		final double pitchVar = 0.5;
 		
+		modify(st, durAbs, durRel, pitchFix, pitchVar);
+	}
+	
+	private static void modify(List<RealNote> st, double durAbs, double durRel, double pitchFix, double pitchVar) {
+		final Random rnd = new Random();
+		
 		for (RealNote n : st) {
-			n.setDuration(n.getDuration()*durAbs + rnd.nextGaussian()*durRel);
+			double dur = n.getDuration()*durAbs + rnd.nextGaussian()*durRel;
+			n.setDuration(dur >= 0 ? dur : 0);
 			
 			if (n.getPitch() != RealNote.SILENCE) {
 				double semitones = pitchFix + pitchVar * rnd.nextGaussian();
@@ -235,6 +246,10 @@ public class Test {
 	}
 
 	private void recordNotes(List<RealNote> st, File out) {
+		final int channel = 0;
+		final int velocity = 30;
+		final int patch = 72; // clarinet
+		
 		long tick = 0;
 		final int res = 10;
 		
@@ -248,17 +263,31 @@ public class Test {
 		
 		Track t = seq.createTrack();
 		
+		if (patch != 0) {
+			ShortMessage programChange = new ShortMessage();
+			try {
+				programChange.setMessage(ShortMessage.PROGRAM_CHANGE, channel, patch, 0);
+			} catch (InvalidMidiDataException e) {
+				e.printStackTrace();
+			}
+			t.add(new MidiEvent(programChange, tick));
+		}
+
 		for (RealNote n : st) {
 			if (n.getPitch() != RealNote.SILENCE) {
 				try {
+					t.add(new MidiEvent(new PitchWheelMessage(channel, SoundTrackExtractor.pitchToKeyResidual(n.getPitch())), tick));
+					logger.debug("pitch = " + n.getPitch());
+					logger.debug("key = " + SoundTrackExtractor.pitchToKey(n.getPitch()));
+					logger.debug("res = " + SoundTrackExtractor.pitchToKeyResidual(n.getPitch()));
 					ShortMessage msg = new ShortMessage();
-					msg.setMessage(MidiUtils.NOTE_ON<<4, SoundTrackExtractor.pitchToKey(n.getPitch()), 30);
+					msg.setMessage(ShortMessage.NOTE_ON, channel, SoundTrackExtractor.pitchToKey(n.getPitch()), velocity);
 					t.add(new MidiEvent(msg, tick));
 					
 					tick += n.getDuration() * 300;
 					
 					msg = new ShortMessage();
-					msg.setMessage(MidiUtils.NOTE_OFF<<4, SoundTrackExtractor.pitchToKey(n.getPitch()), 30);
+					msg.setMessage(ShortMessage.NOTE_OFF, channel, SoundTrackExtractor.pitchToKey(n.getPitch()), velocity);
 					t.add(new MidiEvent(msg, tick));
 				} catch (InvalidMidiDataException e) {
 					e.printStackTrace();
