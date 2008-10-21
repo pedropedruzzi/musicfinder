@@ -113,12 +113,21 @@ public class SoundTrackExtractor {
 		return notes;
 	}
 	
-	public static double keyToPitch(int key) {
+	public static double keyToPitch(double key) {
 		return Math.pow(2, (key - 69) / 12d) * 440;
 	}
 	
 	public static int pitchToKey(double pitch) {
-		return (int) (69 + 12 * Math.log(pitch / 440) / Math.log(2));
+		return (int) pitchToKeyDouble(pitch);
+	}
+	
+	public static double pitchToKeyDouble(double pitch) {
+		return 69 + 12 * Math.log(pitch / 440) / Math.log(2);
+	}
+	
+	public static double pitchToKeyResidual(double pitch) {
+		double key = pitchToKeyDouble(pitch);
+		return key - Math.round(key);
 	}
 
 	private void noteOn(long tick, int channel, int key, int velocity) {
