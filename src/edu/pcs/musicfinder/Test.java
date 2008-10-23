@@ -51,7 +51,7 @@ public class Test {
 		
 		//modify(track, 2, 0, 0, 0);
 		
-		t.recordNotes(track, "redder", 1);
+		t.recordNotes(track, "pedrox", 1);
 	}
 	
 	public static void mainOld(String[] args) {
@@ -274,7 +274,7 @@ public class Test {
 		}
 
 		for (RealNote n : st) {
-			if (n.getPitch() != RealNote.SILENCE) {
+			if (n.getPitch() != RealNote.SILENCE && underLimits(n.getPitch())) {
 				try {
 					t.add(new MidiEvent(new PitchWheelMessage(channel, SoundTrackExtractor.pitchToKeyResidual(n.getPitch())), tick));
 					logger.debug("pitch = " + n.getPitch());
@@ -303,5 +303,9 @@ public class Test {
 		} catch (IOException e) {
 			logger.error("error writting midi sequence", e);
 		}
+	}
+
+	private boolean underLimits(double pitch) {
+		return pitch > 20 && pitch < 20000;
 	}
 }
