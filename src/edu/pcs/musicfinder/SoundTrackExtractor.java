@@ -118,7 +118,7 @@ public class SoundTrackExtractor {
 	}
 	
 	public static int pitchToKey(double pitch) {
-		return (int) pitchToKeyDouble(pitch);
+		return (int) Math.round(pitchToKeyDouble(pitch));
 	}
 	
 	public static double pitchToKeyDouble(double pitch) {
