@@ -7,7 +7,7 @@ public class PitchWheelMessage extends ShortMessage {
 
 	public PitchWheelMessage(int channel, double semitones) {
 		int val = (int) (semitones * 0x1000) + 0x2000;
-		if (val >> 14 != 0) throw new IllegalArgumentException();
+		if (val >> 14 != 0) throw new IllegalArgumentException("semitones = " + semitones);
 		
 		int data1 = val & 0x7f;
 		int data2 = val >> 7;

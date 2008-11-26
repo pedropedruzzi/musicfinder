@@ -30,7 +30,7 @@ public class RedderTrackFileParser {
 					if (lastKey == 90) {
 						pitch = RealNote.SILENCE;
 					} else {
-						pitch = SoundTrackExtractor.keyToPitch(lastKey);
+						pitch = lastKey;
 						System.out.println(i++ + "\t" + lastKey + "\t" + (time - lastTime));
 					}
 					track.add(new RealNote(pitch, time - lastTime));
@@ -46,7 +46,7 @@ public class RedderTrackFileParser {
 			if (lastKey == 90) {
 				pitch = RealNote.SILENCE;
 			} else {
-				pitch = SoundTrackExtractor.keyToPitch(lastKey);
+				pitch = lastKey;
 				System.out.println(i++ + "\t" + lastKey + "\t" + (time - lastTime));
 			}
 			track.add(new RealNote(pitch, time - lastTime));
