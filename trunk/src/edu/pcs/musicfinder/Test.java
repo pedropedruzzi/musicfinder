@@ -43,7 +43,7 @@ public class Test {
 		return extractor.extractReal(trackNumber);
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main2(String[] args) throws FileNotFoundException {
 		Test t = new Test();
 		RedderTrackFileParser parser = new RedderTrackFileParser();
 		
@@ -54,15 +54,27 @@ public class Test {
 		t.recordNotes(track, "pedrox", 1);
 	}
 	
-	public static void mainOld(String[] args) {
+	public static void dumpPitchs(List<RealNote> l) {
+		for (RealNote n : l) {
+			System.out.println(n.getPitch());
+		}
+	}
+	
+	public static void main(String[] args) {
 		Test t = new Test();
 		//t.loadRepository();
-		List<RealNote> track = t.extractTrack("teste", 0);
-		//track = removeSilence(track);
+		List<RealNote> track = t.extractTrack("yesterday", 3);
+		track = removeSilence(track);
 		
-		//List<RealNote> part = copyPart(track, 21, 8); //copyPart(track, 100, 16);
+		track = copyPart(track, 21, 30); //copyPart(track, 100, 16);
 		//modify(part);
+		System.out.println("Antes:");
+		dumpPitchs(track);
+		
 		modify(track);
+		
+		System.out.println("Depois:");
+		dumpPitchs(track);
 		
 		//search(track, part);
 		
@@ -177,9 +189,9 @@ public class Test {
 	}
 	
 	private static void modify(List<RealNote> st) {
-		final double durAbs = 1.1;
-		final double durRel = 0.01;
-		final double pitchFix = 3.0;
+		final double durAbs = 1.0;
+		final double durRel = 0.03;
+		final double pitchFix = 3.5;
 		final double pitchVar = 0.5;
 		
 		modify(st, durAbs, durRel, pitchFix, pitchVar);
@@ -247,7 +259,7 @@ public class Test {
 
 	private void recordNotes(List<RealNote> st, File out) {
 		final int channel = 0;
-		final int velocity = 30;
+		final int velocity = 90;
 		final int patch = 72; // clarinet
 		
 		long tick = 0;
