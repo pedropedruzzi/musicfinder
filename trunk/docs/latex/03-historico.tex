@@ -31,4 +31,17 @@ Métodos baseados na análise do domínio do tempo se valem do fato que os sinais s
 	\caption{\label{fig:zcr} Influência da frequência fundamental na taxa de cruzamento do eixo}
 \end{figure}
 
-\paragraph{Taxa de picos.} Este método consiste em contar o número de picos por segundo em um sinal, sabendo que através do número de picos é possível inferir a frequência do sinal, tem-se então a estimativa do frequência. Analogamente ao ZCR, a frequência fundamental será a componente de frequência que mais contribuirá para a ocorrência de picos no sinal, assim é possível dizer que a estimativa obtida corresponde a estimativa da frequência fundamental.
+\paragraph{Taxa de picos.} Este método consiste em contar o número de picos por segundo em um sinal, sabendo que através do número de picos é possível inferir a frequência do sinal, tem-se então a estimativa do frequência. Analogamente ao ZCR, a frequência fundamental será a componente de frequência que mais contribuirá para a ocorrência de picos no sinal, assim é possível dizer que a estimativa obtida corresponde à estimativa da frequência fundamental.
+
+\paragraph{Taxa de eventos de inclinação.} Devido ao fato do sinal ser periódico a inclinação do sinal também irá variar periodicamente, assim observar picos e zeros da inclinação do sinal pode ser mais informativo do que observar picos e zeros do sinal original.
+
+\paragraph{Correlação.} Existem ainda métodos que se baseiam na correlação entre duas amostras de áudio, definindo assim a similaridade entre os dois sinais. Formas de onde similares apresentariam uma correlação alta, enquanto formas de onda muito diferentes teriam uma baixa correlação.
+
+Além de métodos baseados no domínio do tempo, existem também diversas técnicas baseadas no domínio da frequência. Estas, por sua vez, recaem sobre o fato de que o sinal pode ser modelado como uma soma de séries harmônicas, guardando um alto grau de informação sobre a frequência fundamental.
+
+\paragraph{Proporção de componentes de frequência}  Em 1979, Martin Piszczalski trabalhava em um sistema capaz de transcrever músicas automaticamente, assim, necessariamente um dos componentes deste sistema era o componente de extração de notas. O procedimento adotado se valia do cálculo do espectro do sinal, da detecção de picos deste espectro, e de uma análise probabilística destes picos.
+
+\paragraph{Métodos baseados em filtros} Estes métodos utilizam a idéia de aplicar diferentes filtros ao sinal, e analisar sua saída. Por exemplo, caso um sinal possua uma saída alta após a aplicação de um filtro passa-faixa, pode-se afirmar que este sinal possui entre suas componentes a frequência do filtro. Em 1977 James A. Moorer, propos um algoritmo denominado Filtro Comb Ótimo, baseado nestes conceitos. Uma tentativa mais recente foi proposta por John E. Lane, denominado Filtro IIR Ajustável. Existem ainda diversas técnicas que se apóiam sobre a análise cepstrum, que corresponde ao resultado da tranformada de Fourier do log do espectro de magnitude so sinal de entrada.
+
+Diversos métodos estatísticos sobre o domínio da frequência também foram desenvolvidos, dentre estes deve-se destacar duas abordagens importantes: redes neurais e estimadores de Máxima Verossimilhança.
+
