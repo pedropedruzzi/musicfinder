@@ -1,0 +1,34 @@
+\chapter{Histórico}
+
+Nesta seção serão apresentados os históricos dos principais temas relacionados ao projeto desenvolvido. Mostrando sucintamente a história que se desenrolou paralelamente dos sistemas de busca e dos avanços dos métodos de manipulação de conteúdos de áudio através dos computadores.
+
+\section{Histórico dos sistemas de busca}
+
+Métodos de busca baseados em texto já são antigos e utilizados há um longo tempo, entre os métodos mais simples pode-se citar o uso índices remissivos. Apesar de simples, este método é extremamente útil e eficiente quando se deseja buscar por uma palavra dentro de um conjunto de documentos. Além deste método simples, existem ainda outras formas de se indexar um documento e efetuar uma busca sobre o mesmo. Porém a aplicação manual destes métodos sempre apresentou dificuldades, pelas dificuldades de indexação de palavras, lentidão de busca, etc.
+
+Como advento dos computadores, tais método passaram a ser implantados por computadores, o que obviamente aumentou sua capacidade, e facilidade de uso. Assim nasceram os primeiros sistemas de busca, juntamente com os computadores. Porém estes métodos eram em sua essência muito simplistas, considerando em geral apenas buscas por trechos exatos.
+
+A idéia dos sistemas de busca da forma como conhecemos hoje surgiu algum tempo depois, já por volta da década de 60, e foi se aprimorando ao longo dos anos. Conceitos como modelo de espaço vetorial, frequência inversa no documento (IDF), frequência do termo (TF), discriminação de termos, relevância e feedback começaram a ser galgados nesta época. Tais técnicas evoluíram muito ao longo dos anos, provendo ferramentas extremamente importantes para efetuar indexação e buscas sobre conjuntos extensos de documentos.
+
+Conforme o tamanho do espaço de busca cresce, maior importância tais técnicas assumem, assim, com o advento da internet, estes métodos adquiriram um papel especial no mundo da computação. Isso porque a internet abriu a possibilidade de se criar espaços de buscas muito maiores do que até então construídos, já que a superfície de busca poderia ser virtualmente todo documento disponível na rede. 
+Por volta da década de 90 começam então a surgir os sistemas web de indexação e busca, o primeiro sistema deste tipo foi o Archie, porem efetuava buscas apenas sobre nomes de arquivos, e não sobre seus conteúdos. Pouco tempo depois surgiram os primeiros crawlers, componente dos sistemas de busca que se tornou indispensável aos sistemas atuais.
+
+Desde seu início até o presente a ciência de Recuperação de Informação (Information Retrieval) evolui muito, e diversos métodos de busca, além de variações, foram criados ao longo destes anos, e hoje se podem citar dois modelos que assumiram importância fundamental nesta ciência o modelo espaço vetorial, e o modelo probabilístico.
+
+Tais modelos e técnicas dão o tom do estudo desta ciência no mundo acadêmico, porém apenas tais conceitos não são o suficiente para se construir um sistema de busca similar aos que encontramos atualmente. Além destes princípios, considerações diversas relacionadas a desempenho, propriedade intelectual, conteúdo impróprio, conteúdo falso, tentativas de manipulação de resultados, etc. devem ser levadas em conta.
+Hoje, uma das tendências mais fortes de desenvolvimento desta área é a especialização dos sistemas de buscas, levando em conta, por exemplo, aspectos semânticos do tema que constitui o espaço de busca. Relacionado a isso, há também um grande interesse em expandir as fronteiras da ciência de recuperação de informação para outros tipos de conteúdo, como conteúdos de áudio e vídeo. Recentemente, a TREC ? Text REtrieval conference, uma das maiores conferências sobre recuperação de texto, incorporou o tema de busca sobre áudio como uma sub-tarefa.
+
+\section{Histórico de técnicas de estimação de frequência}
+O problema de estimar a frequência de trecho de áudio é um problema estudado há um longo tempo, diversas técnicas e métodos já foram desenvolvidos sobre o tema, porém até o presente momento estas técnicas ainda apresentam fortes deficiências e não são capazes de atingir o nível desejado de qualidade. Frente a um sinal único claro, diversas técnicas apresentam um bom desempenho, porém quando testadas com sinais ruidosos, ou contendo mais de uma linha melódica estas técnicas tendem a falhar.
+Diferentes conceitos podem ser aplicados na tentativa de estimar a frequência de um trecho de áudio, entre as principais técnicas tem-se: métodos que se baseiam no domínio do tempo, métodos que utilizam o domínio da frequência e métodos estatísticos.
+
+Métodos baseados na análise do domínio do tempo se valem do fato que os sinais são periódicos, o que faz alguns eventos também serem periódicos, e, portanto, podem ser contados.
+
+\paragraph{Taxa de cruzamento do eixo (ZCR - Zero-crossing rate).} A idéia deste método consiste em contar o número de vezes que o sinal de áudio cruza o eixo dos tempos, imaginando-se que a principal componente de frequência responsável por este cruzamento será a frequência fundamental. A Figura \ref{fig:zcr} exemplifica o fato, onde uma componente de frequência mais alta não exerce grande influência sobre o número de cruzamentos do sinal com o eixo dos tempos.
+
+\begin{figure}[htb]
+	\center{\includegraphics[width=\textwidth]{figuras/zcr.eps}}
+	\caption{\label{fig:zcr} Influência da frequência fundamental na taxa de cruzamento do eixo}
+\end{figure}
+
+\paragraph{Taxa de picos.} Este método consiste em contar o número de picos por segundo em um sinal, sabendo que através do número de picos é possível inferir a frequência do sinal, tem-se então a estimativa do frequência. Analogamente ao ZCR, a frequência fundamental será a componente de frequência que mais contribuirá para a ocorrência de picos no sinal, assim é possível dizer que a estimativa obtida corresponde a estimativa da frequência fundamental.
