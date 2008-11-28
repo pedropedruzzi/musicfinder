@@ -1,17 +1,22 @@
 package edu.pcs.musicfinder.automaton;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.pcs.musicfinder.MelodyFileUtils;
 import edu.pcs.musicfinder.RealNote;
 import edu.pcs.musicfinder.SoundTrackExtractor;
+import edu.pcs.musicfinder.Test;
 
 public class Automaton {
 	
 	private State first;
 	
-	public static void main(String[] args) {
+	public static void testAutomaton() {
 		Automaton a = new Automaton(new int[] { 3, 4, 5, 6, 7, 8 });
 		a.slidingWindow(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13});
 	}
@@ -147,7 +152,7 @@ public class Automaton {
 	
 	
 
-	public static double[] obtemAlturas(List<RealNote> cadeia) {
+	public static double[] toKeys(List<RealNote> cadeia) {
 		double[] keys = new double[cadeia.size()];
 		for (int i = 0; i < keys.length; i++) {
 			keys[i] = SoundTrackExtractor.pitchToKeyDouble(cadeia.get(i).getPitch());
@@ -155,63 +160,165 @@ public class Automaton {
 		
 		return keys;
 	}
+	
+	public static double offsetIterative(double[] keys, int steps) {
+		double k = 0;
+		
+		for (int i = 0; i < steps; i++) {
+			System.out.println("k = " + k + ": E = " + quantizationError(keys, k));
+			k = offset2(keys, k);
+		}
+		
+		return k;
+	}
 
-	public static int[] prepara(double[] keys) {
+	public static double offset2(double[] keys, double k) {
 		double sum1 = 0;
 		double sum2 = 0;
 
 		// tudo em [0; 1[
 		for (int i = 0; i < keys.length; i++) {
-			sum1 += keys[i] - Math.floor(keys[i]);
-			sum2 += keys[i] + 0.5 - Math.floor(keys[i] + 0.5);
+			sum1 += keys[i] + k - Math.floor(keys[i] + k);
+			sum2 += keys[i] + k + 0.5 - Math.floor(keys[i] + k + 0.5);
 		}
 		
 		double m1 = sum1 / keys.length;
 		double m2 = sum2 / keys.length;
 		
-		double e1 = 0;
-		double e2 = 0;
-		for (int i = 0; i < keys.length; i++) {
-			e1 += Math.abs(keys[i] - Math.floor(keys[i]) - m1);
-			e2 += Math.abs(keys[i] + 0.5 - Math.floor(keys[i] + 0.5) - m2);
-		}
+//		double k1 = 1 - m1 + k;
+//		double k2 = 1.5 - m2 + k;
 		
-		// verifica qual tem menor erro, faz a correção e calcula a média novamente
+		double k1 = k - m1;
+		double k2 = 0.5 + k - m2;
 		
-		double offset;
-		if (e1 < e2) {
-			offset = 0.5 - m1;
-		} else {
-			offset = -m2;
-		}
+		double e1 = quantizationError(keys, k1);
+		double e2 = quantizationError(keys, k2);
+		
+		if (e1 < e2) return k1;
+		else return k2;
+	}
 
+	public static List<Double> possibleKs(double[] keys) {
+		double[] discontinuities = new double[keys.length];
+		List<Double> list = new ArrayList<Double>(keys.length * 2 + 1);
+		
+		for (int i = 0; i < keys.length; i++) {
+			discontinuities[i] = 0.5 + Math.floor(keys[i] + 0.5) - keys[i];
+			list.add(discontinuities[i]);
+		}
+		
+		Arrays.sort(discontinuities);
+		Collections.sort(list);
+		
+		double last = 0;
+		for (int i = 0; i < discontinuities.length; i++) {
+			double k = (last + discontinuities[i]) / 2;
+			
+			double sum = 0;
+			for (int j = 0; j < keys.length; j++) {
+				double tmp = keys[j] - Math.floor(keys[j]) + k + 0.5;
+				sum += Math.floor(keys[j]) + Math.floor(tmp) - keys[j];
+			}
+			
+			k = sum / keys.length;
+			if (k > last && k < discontinuities[i]) list.add(k);
+			
+			last = discontinuities[i];
+		}
+		
+		if (last < 1) {
+			// last interval
+			double k = (last + 1) / 2;
+			
+			double sum = 0;
+			for (int j = 0; j < keys.length; j++) {
+				double tmp = keys[j] - Math.floor(keys[j]) + k + 0.5;
+				sum += Math.floor(keys[j]) + Math.floor(tmp) - keys[j];
+			}
+			
+			k = sum / keys.length;
+			if (k > last && k < 1) list.add(k);
+		}
+		
+		return list;
+	}
+	
+	private static double bestK(double[] keys, List<Double> list) {
+		double best = Double.NaN;
+		double minError = Double.MAX_VALUE;
+		for (double k : list) {
+			double E = quantizationError(keys, k);
+			//System.out.println("k = " + k + ": E = " + E);
+			if (E < minError) {
+				minError = E;
+				best = k;
+			}
+		}
+		return best;
+	}
+	
+	private static double offset(double[] keys) {
+		return bestK(keys, possibleKs(keys));
+	}
+	
+	private static double normalizeOffset(double k) {
+		return k - Math.floor(k + 0.5);
+	}
+	
+	private static int[] quantize(double[] keys) {
+		int[] string = new int[keys.length];
+		
+		double k = normalizeOffset(offset(keys));
+		
+		for (int i = 0; i < keys.length; i++)
+			string[i] = (int) Math.round(keys[i] + k);
+		
+		return string;
+	}
+	
+	private static double quantizationError(double[] keys, double k) {
 		double sum = 0;
-		for (int i = 0; i < keys.length; i++) {
-			double tmp = keys[i] + offset;
-			sum += tmp - Math.floor(tmp);
+		
+		for (double x : keys) {
+			double e = x + k - Math.round(x + k);
+			sum += e*e;
+		}
+		
+		return sum;
+	}
+	
+	public static void main(String[] args) {
+		List<RealNote> melody = Test.testMelody();
+		
+		System.out.println("Cadeia original (MIDI)");
+		for (RealNote n : melody) {
+			System.out.println(SoundTrackExtractor.pitchToKey(n.getPitch()));
+		}
+		
+		System.out.println("Cadeia original (em Hertz)");
+		for (RealNote n : melody) {
+			System.out.println(n.getPitch());
+		}
+		
+		Test.modify(melody, 1, 0, 1.5, 0.3);
+		
+		MelodyFileUtils.toFile(melody, "out/trilha1.melody");
+		Test.recordNotes(melody, "out/trilha1.mid");
+		
+		System.out.println("Cadeia distorcida (em Hertz)");
+		for (RealNote n : melody) {
+			System.out.println(n.getPitch());
 		}
 
-		double m = sum / keys.length;
-		double e = 0;
-
-		for (int i = 0; i < keys.length; i++) {
-			double tmp = keys[i] + offset;
-			e += Math.abs(tmp - Math.floor(tmp) - m);
-		}
+		double[] keys = toKeys(melody);
+		int[] cadeia = quantize(keys);
 		
-		// depois de achar a média final
-		offset += 0.5 - m;
+		System.out.println("Cadeia distorcida após quantização:");
+		for (int nota : cadeia)
+			System.out.println(nota);
 		
-		double erro = 0;
-		int[] qKeys = new int[keys.length];
-		for (int i = 0; i < keys.length; i++) {
-			double tmp = keys[i] + offset;
-			qKeys[i] = (int) Math.floor(tmp);
-			erro += Math.abs(tmp - qKeys[i] - offset);
-		}
+		Automaton automaton = new Automaton(cadeia);
 		
-		
-		return qKeys;
 	}
 	
 
