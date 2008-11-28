@@ -3,6 +3,7 @@ package edu.pcs.musicfinder;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,7 +23,7 @@ public class Test {
 	
 	private static final Logger logger = Logger.getLogger(Test.class);
 
-	private List<RealNote> extractTrackFromFile(File input, int trackNumber) {
+	private static List<RealNote> extractTrackFromFile(File input, int trackNumber) {
 		Sequence seq = null;
 
 		try {
@@ -44,14 +45,13 @@ public class Test {
 	}
 	
 	public static void main2(String[] args) throws FileNotFoundException {
-		Test t = new Test();
 		RedderTrackFileParser parser = new RedderTrackFileParser();
 		
 		List<RealNote> track = parser.parse("resource/pitchs.txt");
 		
 		//modify(track, 2, 0, 0, 0);
 		
-		t.recordNotes(track, "pedrox", 1);
+		recordNotes(track, "out/pedrox1.mid");
 	}
 	
 	public static void dumpPitchs(List<RealNote> l) {
@@ -60,10 +60,9 @@ public class Test {
 		}
 	}
 	
-	public static void main(String[] args) {
-		Test t = new Test();
-		//t.loadRepository();
-		List<RealNote> track = t.extractTrack("yesterday", 3);
+	public static void main3(String[] args) {
+		//loadRepository();
+		List<RealNote> track = extractTrack("yesterday", 3);
 		track = removeSilence(track);
 		
 		track = copyPart(track, 21, 30); //copyPart(track, 100, 16);
@@ -78,20 +77,55 @@ public class Test {
 		
 		//search(track, part);
 		
-		t.recordNotes(track, "yesterday", 4);
+		recordNotes(track, "out/yesterday4.mid");
 	}
 	
-	private SongRepository loadRepository() {
+	public static List<RealNote> testMelody() {
+		List<RealNote> track = extractTrack("yesterday", 3);
+		track = removeSilence(track);
+		track = copyPart(track, 21, 30); //copyPart(track, 100, 16);
+		dumpPitchs(track);
+		return track;
+	}
+	
+	public static void main(String[] args) throws FileNotFoundException {
+		//List<RealNote> x = MelodyFileUtils.fromFile("out/redder.melody");
+		List<RealNote> x = extractTrackFromFile(new File("out/redder_track_1.mid"), 0);
+		//x = copyPart(x, 1, 150);
+
+		toExcelPlot(x);
+		//recordNotes(x, "out/ode_to_joy.mid");
+		//MelodyFileUtils.toFile(x, "out/redder.melody");
+	}
+	
+	public static void toExcelPlot(List<RealNote> x) {
+		double t = 0;
+		boolean space = false;
+		NumberFormat nf = NumberFormat.getNumberInstance();
+		nf.setMaximumFractionDigits(10);
+		for (RealNote rn : x) {
+			double pitch = rn.getPitch();
+			if (pitch == RealNote.SILENCE) {
+				System.out.println();
+				t += rn.getDuration();
+				space = false;
+			} else {
+				if (space) System.out.println();
+				System.out.println(nf.format(t) + "\t" + nf.format(pitch));
+				t += rn.getDuration();
+				System.out.println(nf.format(t) + "\t" + nf.format(pitch));
+				space = true;
+			}
+		}
+	}
+	
+	private static SongRepository loadRepository() {
 		SongRepository repo = new SongRepository();
 		repo.addSong(new Song(new SongMetadata("Ludwig van Beethoven", "Symphony No. 9 in D minor, Op. 125 'Choral'", "Ode To Joy", 1824), Collections.singleton(new MelodyLine(extractTrack("ode_to_joy", 1)))));
 		repo.addSong(new Song(new SongMetadata("The Beatles", "Hey Jude", "Hey Jude", 1968), Collections.singleton(new MelodyLine(extractTrack("hey_jude", 1)))));
 		repo.addSong(new Song(new SongMetadata("The Beatles", "Penny Lane"), Collections.singleton(new MelodyLine(extractTrack("penny_lane", 2)))));
 		repo.addSong(new Song(new SongMetadata("The Beatles", "Help!", "Yesterday", 1965), Collections.singleton(new MelodyLine(extractTrack("yesterday", 3)))));
 		return repo;
-	}
-	
-	private static void search(SongRepository repo, MelodyLine line, MatchSet matches) {
-		
 	}
 
 	private static double search(List<RealNote> track, List<RealNote> part) {
@@ -188,7 +222,7 @@ public class Test {
 		return distance;
 	}
 	
-	private static void modify(List<RealNote> st) {
+	public static void modify(List<RealNote> st) {
 		final double durAbs = 1.0;
 		final double durRel = 0.03;
 		final double pitchFix = 3.5;
@@ -197,7 +231,7 @@ public class Test {
 		modify(st, durAbs, durRel, pitchFix, pitchVar);
 	}
 	
-	private static void modify(List<RealNote> st, double durAbs, double durRel, double pitchFix, double pitchVar) {
+	public static void modify(List<RealNote> st, double durAbs, double durRel, double pitchFix, double pitchVar) {
 		final Random rnd = new Random();
 		
 		for (RealNote n : st) {
@@ -243,7 +277,7 @@ public class Test {
 		return notes;
 	}
 
-	public List<RealNote> extractTrack(String tune, int trackNumber) {
+	public static List<RealNote> extractTrack(String tune, int trackNumber) {
 		List<RealNote> st = null;
 		try {
 			st = extractTrackFromFile(new File("resource/" + tune + ".mid"), trackNumber);
@@ -253,11 +287,7 @@ public class Test {
 		return st;
 	}
 
-	public void recordNotes(List<RealNote> st, String tune, int trackNumber) {
-		recordNotes(st, new File("out/" + tune + "_track_" + Integer.toString(trackNumber) + ".mid"));
-	}
-
-	private void recordNotes(List<RealNote> st, File out) {
+	public static void recordNotes(List<RealNote> st, String filename) {
 		final int channel = 0;
 		final int velocity = 90;
 		final int patch = 72; // clarinet
@@ -311,13 +341,13 @@ public class Test {
 		}
 		
 		try {
-			MidiSystem.write(seq, 1, out);
+			MidiSystem.write(seq, 1, new File(filename));
 		} catch (IOException e) {
 			logger.error("error writting midi sequence", e);
 		}
 	}
 
-	private boolean underLimits(double pitch) {
+	private static boolean underLimits(double pitch) {
 		return pitch > 20 && pitch < 20000;
 	}
 }

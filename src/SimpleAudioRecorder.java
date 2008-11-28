@@ -60,7 +60,7 @@ public class SimpleAudioRecorder extends Thread
 
 	public static void main(String[] args)
 	{
-		String	strFilename = "C:\\Users\\Redder\\Desktop\\xxxx.wav";
+		String	strFilename = "out/xxxx.wav";
 		File	outputFile = new File(strFilename);
 
 		AudioFormat	audioFormat = new AudioFormat(
