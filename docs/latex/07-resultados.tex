@@ -1,1 +1,70 @@
 \chapter{Resultados}
+
+Este capítulo irá apresentar os experimentos e testes realizados sobre os componentes construídos, seus procedimentos, objetivos e resultados obtidos.
+
+\section{Processo de extração de notas}
+
+O mecanismo implementado para extração de notas foi submetido a diversos testes. O procedimento adotado para estes é o seguinte:
+
+\begin{enumerate}
+\item Gravação de uma amostra de áudio
+
+Uma pessoa canta, assobia ou trautea um trecho de 5 a 15 segundos de uma música qualquer. Para captura do áudio utiliza-se um microfone comum de PC e um software simples de gravação. Deste processo resulta-se um arquivo no formato WAVE (citar referência pro formato: http://ccrma.stanford.edu/CCRMA/Courses/422/projects/WaveFormat/).
+
+\item Processamento da amostra
+
+O arquivo é processado com uma rotina desenvolvida no MatLab. O resultado deste processamento é um arquivo textual contendo a freqüência estimada para cada janela de tempo de 100ms (ajustar este valor).
+
+\item Reprodução gráfica e audível
+
+A partir deste resultado, produz-se um gráfico com as alturas das notas no tempo e sintetiza-se um sinal audível correspondente àquelas notas extraídas.
+
+\item Avaliação
+
+Com base no gráfico e no material de áudio sintetizado, avalia-se a semelhança com o material de áudio original.
+
+\end{enumerate}
+
+O objetivo de tal procedimento de testes é verificar a qualidade do processo de extração. Uma vez que o objetivo conceitual da construção de tal processo é avaliar a possibilidade prática de se utilizar amostras audíveis como entrada para sistemas de busca musical, a qualidade deste processo está intimamente relacionada com a possibilidade de se identificar padrões musicais em seus resultados. Ou seja, está reslacionado com a possibilidade de se identificar a música em que foi baseada a reprodução original, a partir da audição do material audível produzido pela extração.
+
+Para avaliar esta capacidade, realizamos um teste auditivo envolvendo voluntários com habilidades musicais variadas. Preparou-se um repertório com cinco músicas populares as quais todos os voluntários conheciam. Destas músicas escolhou-se de um a dois trechos característicos resultando um total de oito trechos. Estes trechos foram reproduzidos por dois cantores amadores, porém um (A) notavelmente mais habilidoso do que o outro (B). Cada um deles gravou cada trecho duas vezes, uma delas assobiando e outra trauteando. As 32 amostras foram submetidas ao processo de extração de notas, gerando 32 amostras sintetizadas com os resultados.
+
+Cada um dos voluntários ouviu as amostras sintetizadas e classificou as cinco músicas com relação à semelhança percebida. Para quantificar os dados obtidos utilizou-se a tabela seguinte, que atribui uma quantidade de pontos com relação à posição que o ouvinte classificou a música em que foi baseada a reprodução.
+
+\begin{table}[ht] \caption{Critério de pontuação} % title of Table
+\centering      % used for centering table
+\begin{tabular}{c c}  % centered columns (4 columns)
+\hline\hline                        %inserts double horizontal lines
+Posição & Pontos \\ [0.5ex] % inserts table %heading
+\hline                    % inserts single horizontal line
+1 & 100  \\   % inserting body of the table
+2 & 60  \\
+3 & 30  \\
+4 & 10  \\
+5 & 0   \\ [1ex]       % [1ex] adds vertical space
+\hline     %inserts single line
+\end{tabular}
+\label{table:nonlin}  % is used to refer this table in the text
+\end{table}
+
+Utilizando este critério avaliou-se os dados do teste auditivo, obtendo a média de pontos para cada cantor e a média geral, como ilustra a tabela a seguir.
+
+\begin{table}[ht] \caption{Resultados do teste auditivo} % title of Table
+\centering      % used for centering table
+\begin{tabular}{c c}  % centered columns (4 columns)
+\hline\hline                        %inserts double horizontal lines
+Cantor & Pontuação média \\ [0.5ex] % inserts table %heading
+\hline                    % inserts single horizontal line
+A & 72,1  \\   % inserting body of the table
+B & 59,3  \\
+Global & 65,7  \\[1ex]       % [1ex] adds vertical space
+\hline     %inserts single line
+\end{tabular}
+\label{table:nonlin}  % is used to refer this table in the text
+\end{table}
+
+
+
+
+
+
