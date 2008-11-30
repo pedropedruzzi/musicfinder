@@ -2,6 +2,9 @@
 
 Nesta seção serão apresentados os históricos dos principais temas relacionados ao projeto desenvolvido. Mostrando sucintamente a história que se desenrolou paralelamente dos sistemas de busca e dos avanços dos métodos de manipulação de conteúdos de áudio através dos computadores.
 
+
+
+
 \section{Histórico dos sistemas de busca}
 
 Métodos de busca baseados em texto já são antigos e utilizados há um longo tempo, entre os métodos mais simples pode-se citar o uso índices remissivos. Apesar de simples, este método é extremamente útil e eficiente quando se deseja buscar por uma palavra dentro de um conjunto de documentos. Além deste método simples, existem ainda outras formas de se indexar um documento e efetuar uma busca sobre o mesmo. Porém a aplicação manual destes métodos sempre apresentou dificuldades, pelas dificuldades de indexação de palavras, lentidão de busca, etc.
@@ -18,17 +21,20 @@ Desde seu início até o presente a ciência de Recuperação de Informação (Informat
 Tais modelos e técnicas dão o tom do estudo desta ciência no mundo acadêmico, porém apenas tais conceitos não são o suficiente para se construir um sistema de busca similar aos que encontramos atualmente. Além destes princípios, considerações diversas relacionadas a desempenho, propriedade intelectual, conteúdo impróprio, conteúdo falso, tentativas de manipulação de resultados, etc. devem ser levadas em conta.
 Hoje, uma das tendências mais fortes de desenvolvimento desta área é a especialização dos sistemas de buscas, levando em conta, por exemplo, aspectos semânticos do tema que constitui o espaço de busca. Relacionado a isso, há também um grande interesse em expandir as fronteiras da ciência de recuperação de informação para outros tipos de conteúdo, como conteúdos de áudio e vídeo. Recentemente, a TREC - Text REtrieval conference, uma das maiores conferências sobre recuperação de texto, incorporou o tema de busca sobre áudio como uma sub-tarefa.
 
+
+
+
 \section{Histórico de técnicas de estimação de frequência}
 O problema de estimar a frequência de trecho de áudio é um problema estudado há um longo tempo, diversas técnicas e métodos já foram desenvolvidos sobre o tema, porém até o presente momento estas técnicas ainda apresentam fortes deficiências e não são capazes de atingir o nível desejado de qualidade. Frente a um sinal único claro, diversas técnicas apresentam um bom desempenho, porém quando testadas com sinais ruidosos, ou contendo mais de uma linha melódica estas técnicas tendem a falhar.
 Diferentes conceitos podem ser aplicados na tentativa de estimar a frequência de um trecho de áudio, entre as principais técnicas tem-se: métodos que se baseiam no domínio do tempo, métodos que utilizam o domínio da frequência e métodos estatísticos.
 
 Métodos baseados na análise do domínio do tempo se valem do fato que os sinais são periódicos, o que faz alguns eventos também serem periódicos, e, portanto, podem ser contados.
 
-\paragraph{Taxa de cruzamento do eixo (ZCR - Zero-crossing rate).} A idéia deste método consiste em contar o número de vezes que o sinal de áudio cruza o eixo dos tempos, imaginando-se que a principal componente de frequência responsável por este cruzamento será a frequência fundamental. A Figura \ref{fig:zcr} exemplifica o fato, onde uma componente de frequência mais alta não exerce grande influência sobre o número de cruzamentos do sinal com o eixo dos tempos.
+\paragraph{Taxa de cruzamento pelo zero (ZCR - Zero-crossing rate).} A idéia deste método consiste em contar o número de vezes que o sinal de áudio cruza o eixo dos tempos, imaginando-se que a principal componente de frequência responsável por este cruzamento será a frequência fundamental. A Figura \ref{fig:zcr} exemplifica o fato, onde uma componente de frequência mais alta não exerce grande influência sobre o número de cruzamentos do sinal com o eixo dos tempos.
 
 \begin{figure}[htb]
 	\center{\includegraphics[width=\textwidth]{figuras/zcr.eps}}
-	\caption{\label{fig:zcr} Influência da frequência fundamental na taxa de cruzamento do eixo}
+	\caption{\label{fig:zcr} Influência da frequência fundamental na taxa de cruzamento pelo zero}
 \end{figure}
 
 \paragraph{Taxa de picos.} Este método consiste em contar o número de picos por segundo em um sinal, sabendo que através do número de picos é possível inferir a frequência do sinal, tem-se então a estimativa do frequência. Analogamente ao ZCR, a frequência fundamental será a componente de frequência que mais contribuirá para a ocorrência de picos no sinal, assim é possível dizer que a estimativa obtida corresponde à estimativa da frequência fundamental.
@@ -39,8 +45,25 @@ Métodos baseados na análise do domínio do tempo se valem do fato que os sinais s
 
 Além de métodos baseados no domínio do tempo, existem também diversas técnicas baseadas no domínio da frequência. Estas, por sua vez, recaem sobre o fato de que o sinal pode ser modelado como uma soma de séries harmônicas, guardando um alto grau de informação sobre a frequência fundamental.
 
-\paragraph{Proporção de componentes de frequência}  Em 1979, Martin Piszczalski trabalhava em um sistema capaz de transcrever músicas automaticamente, assim, necessariamente um dos componentes deste sistema era o componente de extração de notas. O procedimento adotado se valia do cálculo do espectro do sinal, da detecção de picos deste espectro, e de uma análise probabilística destes picos.
+\paragraph{Proporção de componentes de frequência}  Em 1979, Martin Piszczalski ~\cite{MartinPiszczalski} ~\cite{PiszczalskiGaller} trabalhava em um sistema capaz de transcrever músicas automaticamente, assim, necessariamente um dos componentes deste sistema era o componente de extração de notas. O procedimento adotado se valia do cálculo do espectro do sinal, da detecção de picos deste espectro, e de uma análise probabilística destes picos.
 
-\paragraph{Métodos baseados em filtros} Estes métodos utilizam a idéia de aplicar diferentes filtros ao sinal, e analisar sua saída. Por exemplo, caso um sinal possua uma saída alta após a aplicação de um filtro passa-faixa, pode-se afirmar que este sinal possui entre suas componentes a frequência do filtro. Em 1977 James A. Moorer, propos um algoritmo denominado Filtro Comb Ótimo, baseado nestes conceitos. Uma tentativa mais recente foi proposta por John E. Lane, denominado Filtro IIR Ajustável. Existem ainda diversas técnicas que se apóiam sobre a análise cepstrum, que corresponde ao resultado da tranformada de Fourier do log do espectro de magnitude so sinal de entrada.
+\paragraph{Métodos baseados em filtros} Estes métodos utilizam a idéia de aplicar diferentes filtros ao sinal, e analisar sua saída. Por exemplo, caso um sinal possua uma saída alta após a aplicação de um filtro passa-faixa, pode-se afirmar que este sinal possui entre suas componentes a frequência do filtro. Em 1977 James A. Moorer ~\cite{JAMoorer}, propos um algoritmo denominado Filtro Comb Ótimo, baseado nestes conceitos. Uma tentativa mais recente foi proposta por John E. Lane ~\cite[JohnLaneIIRFilter], denominado Filtro IIR Ajustável. Existem ainda diversas técnicas que se apóiam sobre a análise cepstrum, que corresponde ao resultado da tranformada de Fourier do log do espectro de magnitude so sinal de entrada.
 
-Diversos métodos estatísticos sobre o domínio da frequência também foram desenvolvidos, dentre estes deve-se destacar duas abordagens importantes: redes neurais e estimadores de Máxima Verossimilhança.
+Diversos métodos estatísticos sobre o domínio da frequência também foram desenvolvidos, dentre estes se deve destacar duas abordagens importantes: redes neurais e estimadores de Máxima Verossimilhança.
+
+
+\section{Histórico de técnicas de reconhecimento de sinais de áudio}
+
+Há uma diversidade de métodos que podem ser úteis na tentativa de se extrair algum tipo de informação de um conteúdo de áudio, simplificadamente, podem ser divididos entre os que assume algum tipo de conteúdo relacionado à fala, e os que não assumem. Uma diversidade de métodos é direcionado a reconhecer automaticamente a fala, traduzindo um discurso para texto, por exemplo. Este trabalho porém está mais próximo de métodos que abordam o áudio de uma forma mais genérica, sendo mais adequado para conteúdos relacionados a melodias, por exemplo.
+
+Conteúdos de áudio podem armazenar diversas classes de áudio, como melodias, efeito sonoros, sons de animais, e etc., isso deixa claro que métodos baseados na fala são suficientes para uma tarefa geral de busca de áudio. Além desta variedade de sons, um grande complicador é que estes diversos tipos de sons muitas vezes estão misturados, e até simultâneos em um conteúdo de áudio, por exemplo, em uma música, diversos instrumentos contribuem para gerar uma melodia, enquanto pode ainda haver a parte cantada da música.
+
+Um dos problemas mais básicos da análise de áudio é diferenciar um conteúdo constituído por fala, de um conteúdo não vocal. Esta tarefa é importante, pelo fato de existirem diferentes técnicas adequadas para cada um dos tipos, assim, aplicar uma técnica baseada na fala sobre um conteúdo constituído por uma melodia não produzirá resultados úteis. John Saunders ~\cite{JSaundersDiscrimination} apresentou uma técnica baseada em estatísticas do contorno de energia e da taxa de cruzamentos  pelo zero, e reportou uma um acerto de 98\% na classificação de comerciais de rádio. Eric Scheirer e Malcolm Slaney  utilizaram uma técnica baseada na combinação de diversas características, energia de modulação, "centróide espectral", e taxa de cruzamento pelo zero, além de se valer de diversos classificadores, e reportam uma taxa de erro de 1.4\% sobre uma grande coleção de radiodifusão FM. Michelle Spina and Victor Zue ~\cite{spina96automatic} utilizaram noticiários de rádio, e foram capazes de atingir 80,9\% de acerto na classifcação dos conteúdos em sete categorias: limpo, telefone, fala ruidosa, silêncio, música e fala mais música.
+
+O próximo passo após a distinção de um conteúdo de áudio seria permitir a busca sobre conteúdos, isto requer alguma medida de similaridade entre conteúdos de áudio, o que é um assunto extremamente complicado. Pode-se usar conceitos simples para similaridades de texto, como o número de palavras em comum, a ordem que as palavras aparecem, etc., porém, no domínio do áudio, estas medidas não estão tão claras. Para tentar evitar definir tal conceito, técnicas de inteligência artificial como redes neurais e mapas auto-organizáveis foram utilizadas, pelo fato de serem capazes de lidar com conceitos que não estão formalmente definidos.
+
+Em 1996, um grupo em Muscle Fish LLC ~\cite{Erling96Classification} produzio um interessante trabalho, que se valia de características psico-acústicas para caracterizar arquivos de áudio. Um classificador Gaussiano foi utilizado para analisar os arquivos, e uma distância de Mahalanobis foi utilizada para estabelecer a similaridade entre os conteúdos.
+
+Simplificações do problema foram feitas para se permitir um entendimento melhor da área, assim alguns trabalhos utilizaram arquivos MIDI (Musical Instrument Digital Interface), que já possuem uma representação das notas da música. Pesquisadores em Cornell conseguiram bons resultados ao estabelecer três níveis de quantização, dependendo se uma nota seguinte fosse mais alta, mais baixa, ou similar à nota anterior ~\cite{ghias95query}. Algoritmos de busca baseados em cadeias também foram utilizados em tal tarefa, como nos trabalhos produzidos pela Universidade de Waikato na Nova Zelândia ~\cite{Waikato96DigitalLibrary}.
+
+Alguns sistemas que se propõem a realizar esta tarefa de busca de áudio podem ser encontrados, diversas formas de entrada para a busca são utilizadas, além é claro da diversidade de algoritmos que são empregados. Entre os principais podem ser citados: midomi ~\cite{midomi} e musipedia \cite{musipedia}.
