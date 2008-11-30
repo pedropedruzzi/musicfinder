@@ -1,1 +1,150 @@
 \chapter{Técnicas e procedimentos usados}
+% TODO
+Neste capítulo será descrito em detalhes todo o desenvolvimento do presente trabalho. Serão mostradas as técnicas utilizadas, seus fundamentos e objetivos.
+
+\section{Processo de extração de notas}
+% TODO
+
+\section{Representação de notas e melodias}
+Na implementação do sistema, adotou-se um modelo para notas musicais, onde são representadas suas duas características principais: altura e duração. A altura (\emph{pitch}) é mantida em \emph{Hertz} e a duração em segundos.
+
+Uma melodia, sendo uma cadeia de notas, naturalmente foi representada como tal. Os silêncios, intervalos em que não há notas ressonando, não são relevantes para buscas pois é muito mais relevante o início da reprodução de uma nota (ataque) do que seu fim. Por este motivo, os silêncios não são representados, e sua duração é considerada como extensão da duração da nota anterior.
+
+Na primeira etapa do processo de comparação, a altura das notas sofre uma quantização com base na escala musical temperada de 12 tons \cite{Burns99}. Na etapa seguinte a quantização não é necessária, portanto utilizam-se os valores contínuos extraídos da amostra de áudio a fim de obter uma maior precisão numérica.
+
+\section{Proximidade de cadeias musicais}
+Quando uma pessoa canta uma melodia ou a toca em um instrumento, somos eventualmente capazes de identificar a que música aquela melodia pertence. Nosso cérebro é capaz de reconhecer estas semelhanças mesmo na presença de variações ou imprecisões na melodia que ouvimos.
+
+Um exemplo típico de tais variações é a transposição tonal, em que a melodia, ou cadeia musical, é reproduzida com uma variação (logarítmica) fixa na altura de todas as notas, para mais ou para menos. Outro exemplo é a dilatação ou contração das durações das notas que compõe aquela cadeia.
+
+Em muitos casos, somos capazes de identificar músicas mesmo na ocorrência de \emph{erros} na reprodução, tais como uma nota errada (com altura diferente), ou mesmo a omissão ou adição de notas à cadeia original. Estes erros são, em geral, provenientes da incapacidade ou imprecisão do próprio executor.
+
+\section{Comparação numérica}
+Em uma situação hipotética onde não há presença de erros, pode-se analisar a proximidade entre duas cadeias com a mesma quantidade de notas, definindo um modelo matemático que mapeia as notas de uma cadeia nas notas da outra. Sendo $p_1$ e $p_2$, respectivamente as alturas de uma nota do trecho 1 e sua correspondente no trecho 2; e $d_1$ e $d_2$ as durações destas; a relação que mapeia as durações é do tipo: \[ d_1 = A.d_2\]
+
+A constante $A$ representa uma proporcionalidade entre as durações, portanto o modelo adotado permite dilatações e contrações proporcionais.
+
+Para mapear as alturas utiliza-se a seguinte relação: \[ \log p_1 = \log p_2 + B \]
+
+A constante $B$ representa a transposição tonal. A relação logarítmica é necessária pelo fato de que a percepção do ouvido humano para alturas de notas é exponencial.
+
+A partir destas relações de aproximação, calculam-se os parâmetros $A$ e $B$ que melhor aproximam a distribuição segundo o critério de proximidade do método dos mínimos quadrados, isto é, aqueles que minimizem a soma dos erros quadráticos:
+
+\begin{equation} \label{E:errorDuration}
+S_d = \sum_{i=1}^N (A.d_{2i} - d_{1i})^2
+\end{equation}
+\begin{equation} \label{E:errorPitch}
+S_p = \sum_{i=1}^N (\log p_{2i} + B - \log p_{1i})^2
+\end{equation}
+
+A teoria \cite{?} nos mostra que o mínimo de cada uma destas funções ocorre quando suas derivadas com relação ao parâmetro atingem o valor zero:
+
+\[ \frac{\partial S_d}{\partial A} = 0 \]
+\[ 2 \sum_{i=1}^N (A.d_{2i} - d_{1i}) d_{2i} = 0 \]
+\[ \sum_{i=1}^N (A.d_{2i}^2 - d_{1i}d_{2i}) = 0 \]
+\begin{equation} \label{E:paramDuration}
+A = \frac{\sum_{i=1}^N d_{1i}d_{2i} }{\sum_{i=1}^N d_{2i}^2 }
+\end{equation}
+
+\[ \frac{\partial S_p}{\partial B} = 0 \]
+\[ 2 \sum_{i=1}^N (\log p_{2i} + B - \log p_{1i}) = 0 \]
+\[ \sum_{i=1}^N (\log \frac{p_{2i}}{p_{1i}} + B) = 0 \]
+\begin{equation} \label{E:paramPitch}
+B = \frac { \sum_{i=1}^N \log \frac{p_{2i}}{p_{1i}} } { N }
+\end{equation}
+
+Os valores $A$ e $B$ obtidos eventualmente podem ser utilizados para avaliar a proximidade entre as cadeias. Porém, nesta modelagem, o relevante não são os parâmetros obtidos da redução, e sim, a soma quadrática dos erros ao utilizá-los: ~(\ref{E:errorDuration}) e ~(\ref{E:errorPitch}).
+
+Quanto menor forem estas somas, mais próximas são as cadeias comparadas. A distância entre as cadeias é então definida por uma soma ponderada destas somas, com pesos parametrizáveis:
+\begin{equation} \label{E:distance}
+d = \alpha S_d + \beta S_p
+\end{equation}
+
+\section{Busca inexata com automato adaptativo}
+Com a definição de proximidade entre cadeias apresentada acima seria possível construir um mecanismo de busca de uma cadeia sobre um repositório de músicas, utilizando uma janela deslizante do tamanho da cadeia de entrada e varrendo sobre todas as melodias do repositório. Porém tal mecanismo só seria efetivo no caso restrito em que a cadeia de entrada não possui imperfeições como a ausência ou adição de notas.
+
+Conforme já discutido anteriormente estas imperfeições ocorrem com certa freqüência e, em condições habituais, não são suficientes para impedir que uma pessoa seja capaz de idenficar a música executada. Esta consideração motiva a idealização de um mecanismo de comparação que seja capaz de lidar com estas imperfeições.
+
+No capítulo ~\ref{chap:historico} diversas abordagens dadas a este problema foram apresentadas. Porém não se localizou na literatura nenhum material que cite o uso de técnicas adaptativas para este problema. Propõe-se, então, um algoritmo baseado no formalismo dinâmico dos autômatos adaptativos \cite{Neto94}.
+
+Tanto para a construção do autômato quanto para a execução deste, as notas precisam ser encaradas como símbolos de um alfabeto de entrada. Neste sentido suas durações são ignoradas e suas alturas passam por um processo de quantização a fim de assumirem valores discretos correspondentes às notas de um piano \cite{Burns99}. Estes valores discretos formam o alfabeto do autômato.
+
+\subsection{Quantização das alturas}
+O objetivo do processo de quantização é converter os valores contínuos das alturas em um conjunto discreto de números inteiros. O MIDI (Musical Instrument Digital Interface) é um padrão de facto que define um protocolo para comunicação entre instrumentos musicais eletrônicos e outros equipamentos de áudio. Entre diversas outras padronizações, o MIDI define um código para representação das notas do sistema de afinação ocidental (notas do piano). Este código é um número inteiro entre 0 e 127, que é capaz de representar muito além da capacidade audível da maioria dos seres humanos. A nota 0, por exemplo, é uma nota Dó cinco oitavas abaixo do Dó central e corresponde a uma freqüência de 8,176 Hz. Iremos utilizar o código de notas MIDI como alfabeto do autômato.
+
+O processo de quantização se inicia convertendo os valores em Hertz para o padrão MIDI, porém sem perder a parte fracionária do resultado. A relação de conversão \cite{?} é a seguinte:
+\[p = 69 + 12\times\log_2 { \left(\frac {f}{440\,\mbox{Hz}} \right) }.\]
+
+Entretanto, os valores obtidos desta conversão não podem ser simplesmente arredondados para valores inteiros. Isto é justificado pelo fato de que estamos interessados nos valores relativos das alturas, ou seja, é irrelevante a adição de uma constante em todas as notas (o que corresponderia a uma transposição tonal). Mas a soma do erro quadrático de quantização por arredondamento
+\[ E(0) = \sum_{i=1}^N (p_i - \lfloor p_i + 0,5 \rfloor)^2,\]
+com a adição de uma constante $c$ em todos os valores, torna-se:
+\[ E(c) = \sum_{i=1}^N (p_i + c - \lfloor p_i + c + 0,5 \rfloor)^2\]
+que varia com a constante $c$. Em suma, queremos encontrar o valor de $0 < c \leq 1$ que minimiza $E$, para então obter os valores quantizados $v_i$ da seguinte maneira:
+\[ v_i = \lfloor p_i + c + 0,5 \rfloor.\]
+Note que a função $E$ não é contínua. Por este motivo, seu mínimo pode estar ou nos pontos de descontinuidade ou nos pontos em que:
+\begin{equation} \label{E:dE}
+\frac{\partial E}{\partial c} = 0.
+\end{equation}
+Os pontos de descontinuidade ocorrem quando $c = 0,5 + \lfloor p_i + 0,5 \rfloor - p_i + k$, $k \in \mathbb{Z}$, para qualquer $p_i$.
+Estes pontos são candidatos a mínimo de $E$. Entre dois destes pontos consecutivos $c_1$ e $c_2$, $E$ é contínua e então podemos desenvolver a equação ~\ref{E:dE}:
+\begin{equation} \label{E:dE2}
+\sum_{i=1}^N (p_i + c - \lfloor p_i + c + 0,5 \rfloor) = 0
+\end{equation}
+Por termos restringido o intervalo para uma região contínua, o termo $\lfloor p_i + c + 0,5 \rfloor$ agora passa a ser constante. Para calculá-lo basta utilizar para $c$ um valor qualquer do intervalo, como por exemplo a média dos extremos:
+$$ \bar{c} = \frac{c_1+c_2}{2}$$
+Com isso a equação ~\ref{E:dE2} fica:
+\begin{equation} \label{E:dE3}
+c = \frac { \sum_{i=1}^N (\lfloor p_i + \bar{c} + 0,5 \rfloor - p_i) } { N }
+\end{equation}
+Se o valor obtido para $c$ estiver no intervalo $\left]c_1,c_2\right[$ este será solução da equação ~\ref{E:dE} e, portanto, um novo canditado a mínimo de $E$.
+Aplica-se este procedimento para todos os trechos entre pontos de descontinuidade do intervalo $\left]0,1\right]$ e obtem-se desta forma todos os candidatos a mínimo de $E$. Basta verificar os valores de $E$ para cada candidato e escolher aquele que a minimiza.
+
+\subsection{Comparação com autômato adaptativo}
+
+A configuração inicial do autômato de busca adaptativo (seus estados e transições) é obtida através da cadeia de entrada do processo de busca, isto é, a cadeia a ser localizada no repositório. Seja $v_i$, $\forall i=0,\ldots,N-1$ a cadeia de entrada. O autômato é construído inicialmente com $N+1$ estados, numerados de $0$ a $N$, onde apenas o último é final. Adiciona-se transições do estado $i$ para o estado $i+1$ com o símbolo $v_i$, $\forall i=0,\ldots,N-1$.
+
+Para ilustrar esta idéia, considere a seguinte seqüência de notas: 67, 65, 65, 69, 71, 73, 74, 76, 77, 76, 74, 74. A figura abaixo mostra a configuração inicial do autômato de busca adaptativo gerado para esta seqüência.
+
+% FIG
+
+A execução do autômato sobre uma cadeia qualquer inicia-se com o cálculo de uma constante de transposição. Esta constante nada mais é do que a diferença entre a primeira nota da cadeia de entrada e a da cadeia que originou o autômato. Esta constante é descontada no valor dos símbolos a cada leitura, e serve fundamentalmente para desfazer uma possível transposição tonal.
+
+O caminho definido pelos estados de $0$ a $N$, deste ponto adiante chamado de caminho de referência, ocorre quando a cadeia de entrada equivale exatamente à cadeia procurada, a menos da constante de transposição. Porém se, durante a execução no caminho de referência, o autômato se depara com um símbolo de entrada para o qual não existe transição, este dispara uma ação adaptativa incorporando à sua configuração uma estrutura com novos estados e transições a partir do estado atual, com o objetivo de flexibilizar a comparação, contornando alguns tipos de erros conhecidos.
+
+A figura abaixo mostra o mesmo autômato da figura anterior após uma ação adaptativa disparada ao receber o símbolo 72 no estado 4.
+
+% FIG
+
+A partir do novo estado atingido e da estrutura incorporada, o autômato é capaz de lidar com as seguintes situações de erro:
+\begin{enumerate}
+\item Omissão de uma nota
+
+Uma nota foi omitida na cadeia que gerou o autômato. Este atinge o estado X e em seguida retomaria o curso original recebendo a nota 72.
+
+\item Adição de uma nota
+
+Uma nota foi insida na cadeia. O autômato receberia o símbolo 73 atingindo o estado Y e retomaria o curso recebendo a nota 74.
+
+\item \label{i:troca} Troca de uma nota
+
+Uma nota foi trocada por outra qualquer. O autômato atinge o estado X e ao receber a nota 73 retoma o curso.
+\end{enumerate}
+
+Durante o processamento da cadeia pelo autômato, o algoritmo de comparação registra um código de resultado para cada nota lida, em uma lista. Quando a nota recebida era esperada, o algoritmo registra sucesso. Quando a nota não era esperada o algoritmo registra qual foi a situação de erro ocorrida. Note que neste caso o resultado só pode ser determinado ao tratar a próxima nota.
+
+É importante notar que só há possibilidade de ação adaptativa nos estados do caminho de referência. Se o autômato estiver fora deste caminho, a recepção de um símbolo não esperado implicará na não aceitação da cadeia.
+
+Por outro lado, se o autômato eventualmente atingir o estado final, a cadeia é considerada aceita. Isto significa na prática que, contornando eventuais situações de erro devidamente isoladas, as cadeias são semelhantes. A partir deste momento a lista de códigos de resultados é analisada com o objetivo de mensurar a distância entre as cadeias comparadas.
+
+Para esta análise, dois aspectos são considerados. O primeiro deles é direto e correponde à quantidade de erros observados. Quanto menor o número de erros mais próximas são as cadeias. O segundo aspecto envolve um procedimento mais elaborado. Note que a partir da cadeia que originou o autômato e da lista de códigos de resultados, é possível construir uma cadeia artificial, corrigindo os erros registrados. Assim se, por exemplo, uma nota for omitida, pode-se readicioná-la à cadeia. O objetivo desta reconstrução é possibilitar a aplicação dos métodos numéricos de comparação nota a nota apresentados anteriormente. Principalmente com relação às durações das notas, aspecto que fora desconsiderado nesta nova abordagem até então.
+
+Algumas considerações são importantes no que tange à reconstrução da cadeia com base nas informações de erros. Para notas trocadas (caso~\ref{i:nota}), deve-se manter a duração original. Para notas omitidas, estas deverão ser readicionadas com duração zero para que não haja interferência no contorno temporal geral da cadeia. A nota é adicionada somente para alinhar o emparelhamento necessário para a comparação nota a nota. E, por fim, para o o caso de notas adicionadas, estas são retiradas e sua duração é incorporada à nota imediatamente anterior.
+
+Com base nestas considerações o algoritmo de comparação constrói a cadeia corrigida e, executando o procedimento de comparação de durações, consegue obter um valor numérico para a distância das cadeias com relação às durações de suas notas.
+
+\subitem{Busca}
+
+A busca é implementada aplicando-se o algoritmo descrito acima sobre todas as melodias do repositório. O autômato é aplicado inicialmente à cadeia que corresponde a uma melodia completa. Em seguida, a primeira nota desta cadeia é eliminada e o autômato é aplicado novamente. E assim sucessivamente até que a cadeia torne-se vazia, então parte-se para a próxima melodia do repositório.
+
+Ao longo deste processo, o mecanismo de busca mantém um conjunto com as N melhores correspondências que encontrou. Desta forma, ao final da varredura de todo o repositório, tem-se os resultados da busca.
+
