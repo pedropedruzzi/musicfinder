@@ -12,7 +12,7 @@ tese.ps: tese.dvi
 	dvips -t a4 -o tese.ps tese
 	
 tese.pdf: tese.dvi
-	ps2pdf tese.ps tese.pdf
+	pdflatex tese
 
 clean:
 	rm -f *.aux *.log *.blg *.bbl *.dvi *.ps *.pdf *.toc *.lot *.lof
