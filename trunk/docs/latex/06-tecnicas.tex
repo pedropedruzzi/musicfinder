@@ -114,26 +114,110 @@ A execução do autômato sobre uma cadeia qualquer inicia-se com o cálculo de uma 
 
 O caminho definido pelos estados de $0$ a $N$, deste ponto adiante chamado de caminho de referência, ocorre quando a cadeia de entrada equivale exatamente à cadeia procurada, a menos da constante de transposição. Porém se, durante a execução no caminho de referência, o autômato se depara com um símbolo de entrada para o qual não existe transição, este dispara uma ação adaptativa incorporando à sua configuração uma estrutura com novos estados e transições a partir do estado atual, com o objetivo de flexibilizar a comparação, contornando alguns tipos de erros conhecidos.
 
-A figura abaixo mostra o mesmo autômato da figura anterior após uma ação adaptativa disparada ao receber o símbolo 72 no estado 4.
+A figura \ref{fig:automato2} mostra o mesmo autômato da figura anterior após uma ação adaptativa disparada ao receber um símbolo diferente de 73 no estado 5.
 
-% FIG
+\begin{figure}[htb]
+	\center{\includegraphics[width=\textwidth]{figuras/zcr.eps}}
+	\caption{\label{fig:automato2} Configuração do autômato após ação adaptativa}
+\end{figure}
 
 A partir do novo estado atingido e da estrutura incorporada, o autômato é capaz de lidar com as seguintes situações de erro:
 \begin{enumerate}
 \item Omissão de uma nota
 
-Uma nota foi omitida na cadeia que gerou o autômato. Este atinge o estado X e em seguida retomaria o curso original recebendo a nota 72.
+Uma nota foi omitida na cadeia que gerou o autômato. Este atinge o estado X recebendo uma nota qualquer (diferente de ??) e em seguida retoma o curso original a partir do estado 6, ao receber a nota 73.
 
 \item Adição de uma nota
 
-Uma nota foi inserida na cadeia. O autômato receberia o símbolo 73 atingindo o estado Y e retomaria o curso recebendo a nota 74.
+Uma nota foi inserida na cadeia. O autômato atinge o estado Y com símbolo 74 atingindo, mas retoma o curso recebendo para o estado 8 recebendo a nota 76.
 
 \item \label{i:troca} Troca de uma nota
 
-Uma nota foi trocada por outra qualquer. O autômato atinge o estado X e ao receber a nota 73 retoma o curso.
+Uma nota foi trocada por outra qualquer. O autômato atinge o estado Z ao receber uma nota qualquer mas retorna para o estado 7 recebendo a nota 74.
 \end{enumerate}
 
 Durante o processamento da cadeia pelo autômato, o algoritmo de comparação registra um código de resultado para cada nota lida, em uma lista. Quando a nota recebida era esperada, o algoritmo registra sucesso. Quando a nota não era esperada o algoritmo registra qual foi a situação de erro ocorrida. Note que neste caso o resultado só pode ser determinado ao tratar a próxima nota.
+
+Abaixo segue uma simulação de execução do autômato da figura \ref{fig:automato1}, para cadeias de entrada com as três situações de erro descritas a pouco.
+
+
+\texttt{
+Cadeia para produzir o autômato:
+67 65 65 69 71 73 74 76 77 76 74 74 0
+
+Exemplo de troca:
+67 65 65 69 71 74 74 76 77 76 74 74 0
+[OK, OK, OK, OK, OK, EXCHANGE, OK, OK, OK, OK, OK, OK]
+
+Exemplo de adição:
+67 65 65 69 71 74 76 77 76 74 74 0
+[OK, OK, OK, OK, OK, ADDITION, OK, OK, OK, OK, OK]
+
+Exemplo de omissão:
+67 65 65 69 71 74 73 74 76 77 76 74 74 0
+[OK, OK, OK, OK, OK, OMISSION, OK, OK, OK, OK, OK, OK, OK]
+}
+
+Saída completa do simulador:
+\texttt{
+Entre com uma cadeia terminada por 0 para gerar o autômato:
+67 65 65 69 71 73 74 76 77 76 74 74 0
+Digite:
+	1, para digitar uma cadeia de entrada.
+	2, para gerar uma cadeia de entrada.
+	0, para sair.
+1
+Entre com a cadeia de entrada terminando com 0:
+67 65 65 69 71 74 74 76 77 76 74 74 0
+true
+[OK, OK, OK, OK, OK, EXCHANGE, OK, OK, OK, OK, OK, OK]
+Digite:
+	1, para digitar uma cadeia de entrada.
+	2, para gerar uma cadeia de entrada.
+	0, para sair.
+1
+Entre com a cadeia de entrada terminando com 0:
+67 65 65 69 71 74 76 77 76 74 74 0
+true
+[OK, OK, OK, OK, OK, ADDITION, OK, OK, OK, OK, OK]
+Digite:
+	1, para digitar uma cadeia de entrada.
+	2, para gerar uma cadeia de entrada.
+	0, para sair.
+1
+Entre com a cadeia de entrada terminando com 0:
+67 65 65 69 71 74 73 74 76 77 76 74 74 0
+true
+[OK, OK, OK, OK, OK, OMISSION, OK, OK, OK, OK, OK, OK, OK]
+Digite:
+	1, para digitar uma cadeia de entrada.
+	2, para gerar uma cadeia de entrada.
+	0, para sair.
+}
+
+\texttt{
+Entre com uma cadeia terminada por 0 para gerar o autômato:
+\definecolor{eclipse-green}{rgb}{0,0.78,0,49}
+\textcolor{eclipse-green}{
+67 65 65 69 71 73 74 76 77 76 74 74 0
+}
+Digite:
+	1, para digitar uma cadeia de entrada.
+	2, para gerar uma cadeia de entrada.
+	0, para sair.
+\textcolor{eclipse-green}{
+1
+}
+Entre com a cadeia de entrada terminando com 0:
+\textcolor{eclipse-green}{
+67 65 66 69 73 74 73 76 77 74 74 65 0
+}
+A cadeia foi aceita. Lista de códigos de resultado:
+[OK, OK, EXCHANGE, OK, ADDITION, OK, OMISSION, OK, OK, ADDITION, OK]
+}
+
+
+
 
 É importante notar que só há possibilidade de ação adaptativa nos estados do caminho de referência. Se o autômato estiver fora deste caminho, a recepção de um símbolo não esperado implicará na não aceitação da cadeia.
 

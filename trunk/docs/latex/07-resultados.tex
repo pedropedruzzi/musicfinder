@@ -29,7 +29,7 @@ O objetivo de tal procedimento de testes é verificar a qualidade do processo de 
 
 Para avaliar esta capacidade, realizamos um teste auditivo envolvendo voluntários com habilidades musicais variadas. Preparou-se um repertório com cinco músicas populares as quais todos os voluntários conheciam. Destas músicas escolhou-se de um a dois trechos característicos resultando um total de oito trechos. Estes trechos foram reproduzidos por dois cantores amadores, porém um (A) notavelmente mais habilidoso do que o outro (B). Cada um deles gravou cada trecho duas vezes, uma delas assobiando e outra trauteando. As 32 amostras foram submetidas ao processo de extração de notas, gerando 32 amostras sintetizadas com os resultados.
 
-Cada um dos voluntários ouviu as amostras sintetizadas e classificou as cinco músicas com relação à semelhança percebida. Para quantificar os dados obtidos utilizou-se a tabela seguinte, que atribui uma quantidade de pontos com relação à posição que o ouvinte classificou a música em que foi baseada a reprodução.
+Cada um dos voluntários ouviu as amostras sintetizadas e classificou as cinco músicas com relação à semelhança percebida. Para quantificar os dados obtidos utilizou-se a tabela \ref{table:criterioPontos}, que atribui uma quantidade de pontos com relação à posição que o ouvinte classificou a música em que foi baseada a reprodução.
 
 \begin{table}[ht] \caption{Critério de pontuação} % title of Table
 \centering      % used for centering table
@@ -44,26 +44,57 @@ Posição & Pontos \\ [0.5ex] % inserts table %heading
 5 & 0   \\ [1ex]       % [1ex] adds vertical space
 \hline     %inserts single line
 \end{tabular}
-\label{table:nonlin}  % is used to refer this table in the text
+\label{table:criterioPontos}  % is used to refer this table in the text
 \end{table}
 
-Utilizando este critério avaliou-se os dados do teste auditivo, obtendo a média de pontos para cada cantor e a média geral, como ilustra a tabela a seguir.
+Utilizando este critério avaliou-se os dados do teste auditivo, obtendo a média de pontos para cada cantor e a média geral, como ilustra a tabela \ref{table:testeAuditivo}.
 
 \begin{table}[ht] \caption{Resultados do teste auditivo} % title of Table
-\centering      % used for centering table
-\begin{tabular}{c c}  % centered columns (4 columns)
-\hline\hline                        %inserts double horizontal lines
+\centering
+\begin{tabular}{c c}
+\hline\hline
 Cantor & Pontuação média \\ [0.5ex] % inserts table %heading
-\hline                    % inserts single horizontal line
-A & 72,1  \\   % inserting body of the table
+\hline
+A & 72,1  \\
 B & 59,3  \\
-Global & 65,7  \\[1ex]       % [1ex] adds vertical space
-\hline     %inserts single line
+Global & 65,7  \\[1ex]
+\hline
 \end{tabular}
-\label{table:nonlin}  % is used to refer this table in the text
+\label{table:testeAuditivo}
 \end{table}
 
 
+
+\begin{table}[ht] \caption{Efetividade do reconhecimento com o autômato com relação perturbações}
+\centering
+\begin{tabular}{c c}
+\hline\hline
+Desvio padrão de perturbação & Efetividade \\ [0.5ex]
+\hline
+0,00 & 100,0 \\
+0,05 & 100,0 \\
+0,10 & 100,0 \\
+0,15 & 99,8 \\
+0,20 & 97,4 \\
+0,25 & 87,2 \\
+0,30 & 71,8 \\
+0,35 & 55,0 \\
+0,40 & 42,4 \\
+0,45 & 32,6 \\
+0,50 & 24,2 \\
+0,55 & 18,3 \\
+0,60 & 14,6 \\
+0,65 & 10,5 \\
+0,70 & 8,5 \\
+0,75 & 6,5 \\
+0,80 & 5,7 \\
+0,85 & 4,1 \\
+0,90 & 3,2 \\
+0,95 & 2,9 \\[1ex]       % [1ex] adds vertical space
+\hline
+\end{tabular}
+\label{table:efetiv}
+\end{table}
 
 
 

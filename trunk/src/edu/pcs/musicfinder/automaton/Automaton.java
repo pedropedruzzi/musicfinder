@@ -360,6 +360,29 @@ public class Automaton {
 	}
 	
 	public static void main(String[] args) {
+		testeInterativo();
+		//testeEstatistico();
+	}
+	
+	private static void testeEstatistico() {
+		int[] ref = {67, 65, 65, 69, 71, 73, 74, 76, 77, 76, 74, 74};
+		Automaton a = new Automaton(ref);
+		double pitchFix = 0;
+		for (double pitchVar = 0; pitchVar < 1; pitchVar += 0.05) {
+			int success = 0;
+			for (int i = 0; i < 10000; i++) {
+				List<RealNote> track = fromKeys(ref);
+				Test.modify(track, 1, 0, pitchFix, pitchVar);
+				double[] keys = toKeys(track);
+				int[] input = quantize(keys);
+				if (a.process(input, 0)) success += 1;
+			}
+			System.out.println(pitchVar + "\t" + success);
+		}
+		
+	}
+
+	public static void testeInterativo() {
 		System.out.println("Entre com uma cadeia terminada por 0 para gerar o autômato:");
 		Scanner s = new Scanner(System.in);
 		
