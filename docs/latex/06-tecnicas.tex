@@ -103,9 +103,12 @@ Aplica-se este procedimento para todos os trechos entre pontos de descontinuidad
 
 A configuração inicial do autômato de busca adaptativo (seus estados e transições) é obtida através da cadeia de entrada do processo de busca, isto é, a cadeia a ser localizada no repositório. Seja $v_i$, $\forall i=0,\ldots,N-1$ a cadeia de entrada. O autômato é construído inicialmente com $N+1$ estados, numerados de $0$ a $N$, onde apenas o último é final. Adiciona-se transições do estado $i$ para o estado $i+1$ com o símbolo $v_i$, $\forall i=0,\ldots,N-1$.
 
-Para ilustrar esta idéia, considere a seguinte seqüência de notas: 67, 65, 65, 69, 71, 73, 74, 76, 77, 76, 74, 74. A figura abaixo mostra a configuração inicial do autômato de busca adaptativo gerado para esta seqüência.
+Para ilustrar esta idéia, considere a seguinte seqüência de notas: 67, 65, 65, 69, 71, 73, 74, 76, 77, 76, 74, 74. A figura \ref{fig:automato1} mostra a configuração inicial do autômato de busca adaptativo gerado para esta seqüência.
 
-% FIG
+\begin{figure}[htb]
+	\center{\includegraphics[width=\textwidth]{figuras/zcr.eps}}
+	\caption{\label{fig:automato1} Configuração inicial do autômato adaptativo}
+\end{figure}
 
 A execução do autômato sobre uma cadeia qualquer inicia-se com o cálculo de uma constante de transposição. Esta constante nada mais é do que a diferença entre a primeira nota da cadeia de entrada e a da cadeia que originou o autômato. Esta constante é descontada no valor dos símbolos a cada leitura, e serve fundamentalmente para desfazer uma possível transposição tonal.
 
@@ -123,7 +126,7 @@ Uma nota foi omitida na cadeia que gerou o autômato. Este atinge o estado X e em
 
 \item Adição de uma nota
 
-Uma nota foi insida na cadeia. O autômato receberia o símbolo 73 atingindo o estado Y e retomaria o curso recebendo a nota 74.
+Uma nota foi inserida na cadeia. O autômato receberia o símbolo 73 atingindo o estado Y e retomaria o curso recebendo a nota 74.
 
 \item \label{i:troca} Troca de uma nota
 
