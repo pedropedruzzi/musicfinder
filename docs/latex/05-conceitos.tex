@@ -1,5 +1,39 @@
 \chapter{Conceitos}
 
+Este capítulo apresentará a forma como os conceitos presentes no trabalho se interligaram, mostrando o sistema proposto, suas principais características, componentes e funcionalidades.
+
+\section{Sistema}
+
+\begin{listagem}
+\begin{verbatim}
+ Aqui vai o algorítmo...
+\end{verbatim}
+\caption{Este algorítmo faz o seguinte...}
+\end{listagem}
+
+
+\subsection{Descrição}
+
+Propõe-se o desenvolvimento de um protótipo de um sistema de buscas por músicas baseado em conteúdo, este sistema recebe uma entrada do usuário que corresponde à sua \query, ou seja, algum trecho da música buscada que o usuário reproduza através de um assobio. O sistema recebe a \query \ e em seguida compara com as músicas presentes em seu repositório, calculando a similaridade entre cada música e a \query, a partir das comparações efetuadas, o sistema é capaz de apresentar quais as entradas mais prováveis de corresponderem à música procurada.
+
+\subsubsection{Espaço de busca}
+
+O espaço de busca será constituído por músicas em formato MIDI, devidamente preparadas para o ambiente de execução de buscas. Pelo fato dos arquivos MIDI, na maioria dos casos, possuirem diversas trilhas, devem portanto passar por um processo de preparação, onde apenas a trilha mais relevante da música é extraída e então adicionada ao repositório. Devido ao foco dado ao sistema este processo se desenvolveu manualmente, através de uma análise humana de cada trilha, escolhendo a mais relevante.
+
+
+\subsubsection{Entrada de dados}
+
+A entrada do sistema dará origem 
+
+
+
+
+
+\begin{figure}[htb]
+	\center{\includegraphics[width=0.85\textwidth]{figuras/arquitetura.eps}}
+	\caption{\label{fig:arquitetura} Arquitetura do sistema}
+\end{figure}
+
 \section{Processamento de sinais}
 
 \section{Adaptatividade}
