@@ -1,0 +1,114 @@
+\chapter{Resultados}
+
+Este capítulo irá apresentar os experimentos e testes realizados sobre os componentes construídos, seus procedimentos, objetivos e resultados obtidos.
+
+\section{Processo de extração de notas}
+
+O mecanismo implementado para extração de notas foi submetido a diversos testes. O procedimento adotado para estes é o seguinte:
+
+\begin{enumerate}
+\item Gravação de uma amostra de áudio
+
+Uma pessoa canta, assobia ou trautea um trecho de 5 a 15 segundos de uma música qualquer. Para captura do áudio utiliza-se um microfone comum de PC e um software simples de gravação. Deste processo resulta-se um arquivo no formato WAVE.
+
+\item Processamento da amostra
+
+O arquivo é processado com uma rotina desenvolvida no MatLab. O resultado deste processamento é um arquivo textual contendo a freqüência estimada para cada janela de tempo de 100ms (ajustar este valor).
+
+\item Reprodução gráfica e audível
+
+A partir deste resultado, produz-se um gráfico com as alturas das notas no tempo e sintetiza-se um sinal audível correspondente àquelas notas extraídas.
+\end{enumerate}
+
+\section{Rotinas para manipulação de cadeias}
+
+Para poder testar e realizar experimentos com os diversos componentes que fazem tratamento, comparação ou busca de cadeias de notas, preparou-se um conjunto de rotinas capazes de manipular cadeias de notas. Sempre utilizando a representação de notas discutidas na seção~\ref{sec:notas}. São elas:
+\begin{enumerate}
+\item Importação de cadeias a partir de trilhas de arquivos MIDI
+
+Rotina capaz de ler arquivos no formado Standard MIDI File, e extrair a cadeia de notas de uma das trilhas deste.
+
+\item Exportação de cadeias para arquivos MIDI
+
+Rotina que possibilita a exportação de uma cadeia de notas do formato interno para um arquivo MIDI.
+
+\item Extração de subcadeia de uma cadeia
+
+Rotina simples que isola um trecho de uma cadeia, para viabilizar a realização de experimentos.
+
+\item Geração de perturbações
+
+Esta rotina introduz perturbações parametrizáveis nas alturas e durações da cadeia. Os parâmetros são:
+\begin{description}
+  \item[Variação fixa de altura] Um valor em semitons que será adicionado às alturas da cadeia (transposição tonal fixa).
+  \item[Variação aleatória de altura] O valor do desvio-padrão em semitons de uma variação aleatória de altura a ser introduzida em cada nota.
+  \item[Dilatação/contração fixa de durações] Um fator que multiplicará todas as durações da cadeia.
+  \item[Variação aleatória de durações] O valor do desvio-padrão de uma variação aleatória de duração a ser introduzida em cada nota.
+\end{description}
+
+\item Geração de falhas
+
+Rotina que introduz falhas do tipo retirada ou adição de nota, ao longo da cadeia, de forma aleatória.
+
+\end{enumerate}
+
+
+\section{Comparação numérica}
+A comparação numérica foi testada utilizando principalmente a rotina que gera perturbações nas cadeias. A partir de uma dada cadeia de notas de referência, gerou-se um conjunto de variações com a introdução de perturbações de intensidade variável. Executou-se o algoritmo de comparação numérica tanto para alturas como para durações, e calculou-se a média dos valores de distância obtidos.
+
+O gráfico da figura ~\ref{fig:comparacaoNumerica} nos mostra uma comparação de alturas nota a nota graficamente. Neste gráfico é ilustrada uma comparação entre uma cadeia do acervo e uma cadeia de entrada com perturbações. O emparelhamento necessário para este método, torna-se possível a plotagem da distribuição de notas em um plano como o ilustrado. No eixo das abcissas, tem-se a alturas da cadeia do acervo e no eixo das ordenadas as alturas da cadeia de entrada. O algoritmo é análogo ao processo de encontrar a reta neste plano que minimiza um certo critério de erro. Uma vez encontrada esta reta, a idéia de distância está associada à distância total dos pontos à esta reta de aproximação.
+
+%\begin{figure}[htb]
+%	\center{\includegraphics[width=0.6\textwidth]{figuras/chart1.eps}}
+%	\caption{\label{fig:chart1} Emparelhamento de alturas na comparação nota a nota}
+%\end{figure}
+
+\section{Quantização das alturas}
+
+Como foi detalhado no capítulo~\ref{chap:tecnicas}, elaboradou-se um algoritmo para quantizar os valores das alturas das notas, minimizando o erro de quantização. Para ilustrar este processo, gerou-se uma cadeia com perturbações aleatórias a partir de uma cadeia de referência. Os parâmetros para esta geração foram de $1,5$ semitom para variação fixa e $0,3$ para o desvio-padrão da variação aleatória. Em seguida aplicou-se o processo de quantização sobre esta.
+
+O gráfico da figura ~\ref{fig:chart2} mostra as alturas da cadeia em cada uma das etapas deste procedimento. A escala do eixo das ordenadas está na notação MIDI e estão destacados os níveis quantizados. É possível observar que somente três notas ``erradas'' foram geradas.
+
+\section{Comparação com autômato adaptativo}
+
+Para testar a capacidade de reconhecimento inexato do autômato adaptativo, escolheu-se uma cadeia de referência e a partir dela produziu-se dez mil cadeias com perturbações de altura. Aplicou-se, então, o autômato sobre este conjunto e obteve-se um percentual médio de aceitação, ou seja, uma representação da efetividade do autômato. Repetiu-se este procedimento para diversos valores do parâmetro de variação aleatória de altura, e com os resultados obtidos, compilou-se a tabela ~\ref{table:efetiv}.
+
+\begin{table}[ht] \caption{Efetividade do autômato com perturbações}
+\centering
+\begin{tabular}{c c}
+\hline\hline
+Perturbação & Efetividade \\ [0.5ex]
+\hline
+0,00 & 100,0 \\
+0,05 & 100,0 \\
+0,10 & 100,0 \\
+0,15 & 99,8 \\
+0,20 & 97,4 \\
+0,25 & 87,2 \\
+0,30 & 71,8 \\
+0,35 & 55,0 \\
+0,40 & 42,4 \\
+0,45 & 32,6 \\
+0,50 & 24,2 \\
+0,55 & 18,3 \\
+0,60 & 14,6 \\
+0,65 & 10,5 \\
+0,70 & 8,5 \\
+0,75 & 6,5 \\
+0,80 & 5,7 \\
+0,85 & 4,1 \\
+0,90 & 3,2 \\
+0,95 & 2,9 \\[1ex]       % [1ex] adds vertical space
+\hline
+\end{tabular}
+\label{table:efetiv}
+\end{table}
+
+
+
+
+\section{Busca}
+
+% TODO
+% Falar sobre a dificuldade de integração.
+
