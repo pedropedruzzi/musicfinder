@@ -1,4 +1,5 @@
 \chapter{Técnicas e procedimentos usados}
+\label{chap:tecnicas}
 % TODO
 Neste capítulo será descrito em detalhes todo o desenvolvimento do presente trabalho. Serão mostradas as técnicas utilizadas, seus fundamentos e objetivos.
 
@@ -142,21 +143,20 @@ Abaixo segue uma simulação de execução do autômato da figura \ref{fig:automato1}
 
 
 \texttt{
-Cadeia para produzir o autômato:
+Cadeia para produzir o autômato:}
 67 65 65 69 71 73 74 76 77 76 74 74 0
 
 Exemplo de troca:
 67 65 65 69 71 74 74 76 77 76 74 74 0
-[OK, OK, OK, OK, OK, EXCHANGE, OK, OK, OK, OK, OK, OK]
+OK, OK, OK, OK, OK, EXCHANGE, OK, OK, OK, OK, OK, OK
 
 Exemplo de adição:
 67 65 65 69 71 74 76 77 76 74 74 0
-[OK, OK, OK, OK, OK, ADDITION, OK, OK, OK, OK, OK]
+OK, OK, OK, OK, OK, ADDITION, OK, OK, OK, OK, OK
 
 Exemplo de omissão:
 67 65 65 69 71 74 73 74 76 77 76 74 74 0
-[OK, OK, OK, OK, OK, OMISSION, OK, OK, OK, OK, OK, OK, OK]
-}
+OK, OK, OK, OK, OK, OMISSION, OK, OK, OK, OK, OK, OK, OK
 
 Saída completa do simulador:
 \texttt{
@@ -170,7 +170,7 @@ Digite:
 Entre com a cadeia de entrada terminando com 0:
 67 65 65 69 71 74 74 76 77 76 74 74 0
 true
-[OK, OK, OK, OK, OK, EXCHANGE, OK, OK, OK, OK, OK, OK]
+\[OK, OK, OK, OK, OK, EXCHANGE, OK, OK, OK, OK, OK, OK\]
 Digite:
 	1, para digitar uma cadeia de entrada.
 	2, para gerar uma cadeia de entrada.
@@ -179,7 +179,7 @@ Digite:
 Entre com a cadeia de entrada terminando com 0:
 67 65 65 69 71 74 76 77 76 74 74 0
 true
-[OK, OK, OK, OK, OK, ADDITION, OK, OK, OK, OK, OK]
+\[OK, OK, OK, OK, OK, ADDITION, OK, OK, OK, OK, OK\]
 Digite:
 	1, para digitar uma cadeia de entrada.
 	2, para gerar uma cadeia de entrada.
@@ -188,7 +188,7 @@ Digite:
 Entre com a cadeia de entrada terminando com 0:
 67 65 65 69 71 74 73 74 76 77 76 74 74 0
 true
-[OK, OK, OK, OK, OK, OMISSION, OK, OK, OK, OK, OK, OK, OK]
+\[OK, OK, OK, OK, OK, OMISSION, OK, OK, OK, OK, OK, OK, OK\]
 Digite:
 	1, para digitar uma cadeia de entrada.
 	2, para gerar uma cadeia de entrada.
