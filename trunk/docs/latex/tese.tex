@@ -7,12 +7,17 @@
 \usepackage{psfrag}
 \usepackage[center]{caption2}
 \usepackage{amsfonts}
-\usepackage{color}
+\usepackage{float}
+
+
+\floatstyle{ruled}
+\newfloat{listagem}{htbp}{listagem}
+\floatname{listagem}{Listagem}
+
 
 \begin{document}
 
 \DeclareGraphicsRule{.eps.gz}{eps}{.eps.bb}{`gunzip -c #1}
-
 
 \include{capa}
 
@@ -28,10 +33,12 @@
 \tableofcontents
 
 \listoffigures
-
 \listoftables
+% \listof{listagem}{Lista de Listagens}
 
 \include{introducao}
+
+\include{keywords}
 
 \include{01-motivacao}
 \include{02-objetivo}
