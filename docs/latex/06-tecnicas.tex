@@ -7,6 +7,7 @@ Neste capítulo será descrito em detalhes todo o desenvolvimento do presente trab
 % TODO
 
 \section{Representação de notas e melodias}
+\label{sec:notas}
 Na implementação do sistema, adotou-se um modelo para notas musicais, onde são representadas suas duas características principais: altura e duração. A altura (\emph{pitch}) é mantida em \emph{Hertz} e a duração em segundos.
 
 Uma melodia, sendo uma cadeia de notas, naturalmente foi representada como tal. Os silêncios, intervalos em que não há notas ressonando, não são relevantes para buscas pois é muito mais relevante o início da reprodução de uma nota (ataque) do que seu fim. Por este motivo, os silêncios não são representados, e sua duração é considerada como extensão da duração da nota anterior.
@@ -107,7 +108,7 @@ A configuração inicial do autômato de busca adaptativo (seus estados e transiçõe
 Para ilustrar esta idéia, considere a seguinte seqüência de notas: 67, 65, 65, 69, 71, 73, 74, 76, 77, 76, 74, 74. A figura \ref{fig:automato1} mostra a configuração inicial do autômato de busca adaptativo gerado para esta seqüência.
 
 \begin{figure}[htb]
-	\center{\includegraphics[width=\textwidth]{figuras/zcr.eps}}
+	\center{\includegraphics[bb=0 0 3792 99 width=\textwidth]{figuras/automato1.png}}
 	\caption{\label{fig:automato1} Configuração inicial do autômato adaptativo}
 \end{figure}
 
@@ -118,7 +119,7 @@ O caminho definido pelos estados de $0$ a $N$, deste ponto adiante chamado de ca
 A figura \ref{fig:automato2} mostra o mesmo autômato da figura anterior após uma ação adaptativa disparada ao receber um símbolo diferente de 73 no estado 5.
 
 \begin{figure}[htb]
-	\center{\includegraphics[width=\textwidth]{figuras/zcr.eps}}
+	\center{\includegraphics[bb=0 0 3792 693 width=\textwidth]{figuras/automato2.png}}
 	\caption{\label{fig:automato2} Configuração do autômato após ação adaptativa}
 \end{figure}
 
@@ -126,24 +127,24 @@ A partir do novo estado atingido e da estrutura incorporada, o autômato é capaz 
 \begin{enumerate}
 \item Omissão de uma nota
 
-Uma nota foi omitida na cadeia que gerou o autômato. Este atinge o estado X recebendo uma nota qualquer (diferente de ??) e em seguida retoma o curso original a partir do estado 6, ao receber a nota 73.
+Uma nota foi omitida na cadeia que gerou o autômato. Este atinge o estado 14 recebendo uma nota qualquer e em seguida retoma o curso original a partir do estado 6, ao receber a nota 73.
 
 \item Adição de uma nota
 
-Uma nota foi inserida na cadeia. O autômato atinge o estado Y com símbolo 74 atingindo, mas retoma o curso recebendo para o estado 8 recebendo a nota 76.
+Uma nota foi inserida na cadeia. O autômato atinge o estado 13 com símbolo 74 atingindo, mas retoma o curso recebendo para o estado 8 recebendo a nota 76.
 
 \item \label{i:troca} Troca de uma nota
 
-Uma nota foi trocada por outra qualquer. O autômato atinge o estado Z ao receber uma nota qualquer mas retorna para o estado 7 recebendo a nota 74.
+Uma nota foi trocada por outra qualquer. O autômato atinge o estado 14 ao receber uma nota qualquer mas retorna para o estado 7 recebendo a nota 74.
 \end{enumerate}
 
 Durante o processamento da cadeia pelo autômato, o algoritmo de comparação registra um código de resultado para cada nota lida, em uma lista. Quando a nota recebida era esperada, o algoritmo registra sucesso. Quando a nota não era esperada o algoritmo registra qual foi a situação de erro ocorrida. Note que neste caso o resultado só pode ser determinado ao tratar a próxima nota.
 
 Abaixo segue uma simulação de execução do autômato da figura \ref{fig:automato1}, para cadeias de entrada com as três situações de erro descritas a pouco.
 
-
-\texttt{
-Cadeia para produzir o autômato:}
+\begin{listagem}
+\begin{verbatim}
+Cadeia para produzir o autômato:
 67 65 65 69 71 73 74 76 77 76 74 74 0
 
 Exemplo de troca:
@@ -157,9 +158,13 @@ OK, OK, OK, OK, OK, ADDITION, OK, OK, OK, OK, OK
 Exemplo de omissão:
 67 65 65 69 71 74 73 74 76 77 76 74 74 0
 OK, OK, OK, OK, OK, OMISSION, OK, OK, OK, OK, OK, OK, OK
+\end{verbatim}
+\caption{Resumo da simulação de execução do autômato}
+\end{listagem}
 
-Saída completa do simulador:
-\texttt{
+
+\begin{listagem}
+\begin{verbatim}
 Entre com uma cadeia terminada por 0 para gerar o autômato:
 67 65 65 69 71 73 74 76 77 76 74 74 0
 Digite:
@@ -170,7 +175,7 @@ Digite:
 Entre com a cadeia de entrada terminando com 0:
 67 65 65 69 71 74 74 76 77 76 74 74 0
 true
-\[OK, OK, OK, OK, OK, EXCHANGE, OK, OK, OK, OK, OK, OK\]
+[OK, OK, OK, OK, OK, EXCHANGE, OK, OK, OK, OK, OK, OK]
 Digite:
 	1, para digitar uma cadeia de entrada.
 	2, para gerar uma cadeia de entrada.
@@ -179,7 +184,7 @@ Digite:
 Entre com a cadeia de entrada terminando com 0:
 67 65 65 69 71 74 76 77 76 74 74 0
 true
-\[OK, OK, OK, OK, OK, ADDITION, OK, OK, OK, OK, OK\]
+[OK, OK, OK, OK, OK, ADDITION, OK, OK, OK, OK, OK]
 Digite:
 	1, para digitar uma cadeia de entrada.
 	2, para gerar uma cadeia de entrada.
@@ -188,41 +193,16 @@ Digite:
 Entre com a cadeia de entrada terminando com 0:
 67 65 65 69 71 74 73 74 76 77 76 74 74 0
 true
-\[OK, OK, OK, OK, OK, OMISSION, OK, OK, OK, OK, OK, OK, OK\]
+[OK, OK, OK, OK, OK, OMISSION, OK, OK, OK, OK, OK, OK, OK]
 Digite:
 	1, para digitar uma cadeia de entrada.
 	2, para gerar uma cadeia de entrada.
 	0, para sair.
-}
-
-\begin{listagem}
-\begin{verbatim}
-
-Entre com uma cadeia terminada por 0 para gerar o autômato:
-\definecolor{eclipse-green}{rgb}{0,0.78,0,49}
-\textcolor{eclipse-green}{
-67 65 65 69 71 73 74 76 77 76 74 74 0
-}
-Digite:
-	1, para digitar uma cadeia de entrada.
-	2, para gerar uma cadeia de entrada.
-	0, para sair.
-\textcolor{eclipse-green}{
-1
-}
-Entre com a cadeia de entrada terminando com 0:
-\textcolor{eclipse-green}{
-67 65 66 69 73 74 73 76 77 74 74 65 0
-}
-A cadeia foi aceita. Lista de códigos de resultado:
-[OK, OK, EXCHANGE, OK, ADDITION, OK, OMISSION, OK, OK, ADDITION, OK]
-}
 \end{verbatim}
-\caption{Este algorítmo faz o seguinte...}
+\caption{Saída completa da simulação de execução do autômato}
 \end{listagem}
 
-\begin{listagem}
-\begin{verbatim}
+
 
 Entre com uma cadeia terminada por 0 para gerar o autômato:
 \definecolor{eclipse-green}{rgb}{0,0.78,0,49}
@@ -243,9 +223,6 @@ Entre com a cadeia de entrada terminando com 0:
 A cadeia foi aceita. Lista de códigos de resultado:
 [OK, OK, EXCHANGE, OK, ADDITION, OK, OMISSION, OK, OK, ADDITION, OK]
 
-\end{verbatim}
-\caption{Este algorítmo faz o seguinte...}
-\end{listagem}
 
 
 
@@ -260,7 +237,7 @@ Algumas considerações são importantes no que tange à reconstrução da cadeia com 
 
 Com base nestas considerações o algoritmo de comparação constrói a cadeia corrigida e, executando o procedimento de comparação de durações, consegue obter um valor numérico para a distância das cadeias com relação às durações de suas notas.
 
-\subitem{Busca}
+\subsection{Busca}
 
 A busca é implementada aplicando-se o algoritmo descrito acima sobre todas as melodias do repositório. O autômato é aplicado inicialmente à cadeia que corresponde a uma melodia completa. Em seguida, a primeira nota desta cadeia é eliminada e o autômato é aplicado novamente. E assim sucessivamente até que a cadeia torne-se vazia, então parte-se para a próxima melodia do repositório.
 
