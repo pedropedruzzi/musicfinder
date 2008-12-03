@@ -3,9 +3,6 @@
 % TODO
 Neste capítulo será descrito em detalhes todo o desenvolvimento do presente trabalho. Serão mostradas as técnicas utilizadas, seus fundamentos e objetivos.
 
-\section{Processo de extração de notas}
-% TODO
-
 \section{Representação de notas e melodias}
 \label{sec:notas}
 Na implementação do sistema, adotou-se um modelo para notas musicais, onde são representadas suas duas características principais: altura e duração. A altura (\emph{pitch}) é mantida em \emph{Hertz} e a duração em segundos.
@@ -39,7 +36,7 @@ S_d = \sum_{i=1}^N (A.d_{2i} - d_{1i})^2
 S_p = \sum_{i=1}^N (\log p_{2i} + B - \log p_{1i})^2
 \end{equation}
 
-A teoria \cite{?} nos mostra que o mínimo de cada uma destas funções ocorre quando suas derivadas com relação ao parâmetro atingem o valor zero:
+A teoria nos mostra que o mínimo de cada uma destas funções ocorre quando suas derivadas com relação ao parâmetro atingem o valor zero:
 
 \[ \frac{\partial S_d}{\partial A} = 0 \]
 \[ 2 \sum_{i=1}^N (A.d_{2i} - d_{1i}) d_{2i} = 0 \]
@@ -74,7 +71,7 @@ Tanto para a construção do autômato quanto para a execução deste, as notas preci
 \subsection{Quantização das alturas}
 O objetivo do processo de quantização é converter os valores contínuos das alturas em um conjunto discreto de números inteiros. O MIDI (Musical Instrument Digital Interface) é um padrão de facto que define um protocolo para comunicação entre instrumentos musicais eletrônicos e outros equipamentos de áudio. Entre diversas outras padronizações, o MIDI define um código para representação das notas do sistema de afinação ocidental (notas do piano). Este código é um número inteiro entre 0 e 127, que é capaz de representar muito além da capacidade audível da maioria dos seres humanos. A nota 0, por exemplo, é uma nota Dó cinco oitavas abaixo do Dó central e corresponde a uma freqüência de 8,176 Hz. Iremos utilizar o código de notas MIDI como alfabeto do autômato.
 
-O processo de quantização se inicia convertendo os valores em Hertz para o padrão MIDI, porém sem perder a parte fracionária do resultado. A relação de conversão \cite{?} é a seguinte:
+O processo de quantização se inicia convertendo os valores em Hertz para o padrão MIDI, porém sem perder a parte fracionária do resultado. A relação de conversão é a seguinte:
 \[p = 69 + 12\times\log_2 { \left(\frac {f}{440\,\mbox{Hz}} \right) }.\]
 
 Entretanto, os valores obtidos desta conversão não podem ser simplesmente arredondados para valores inteiros. Isto é justificado pelo fato de que estamos interessados nos valores relativos das alturas, ou seja, é irrelevante a adição de uma constante em todas as notas (o que corresponderia a uma transposição tonal). Mas a soma do erro quadrático de quantização por arredondamento
@@ -108,7 +105,7 @@ A configuração inicial do autômato de busca adaptativo (seus estados e transiçõe
 Para ilustrar esta idéia, considere a seguinte seqüência de notas: 67, 65, 65, 69, 71, 73, 74, 76, 77, 76, 74, 74. A figura \ref{fig:automato1} mostra a configuração inicial do autômato de busca adaptativo gerado para esta seqüência.
 
 \begin{figure}[htb]
-	\center{\includegraphics[bb=0 0 3792 99 width=\textwidth]{figuras/automato1.png}}
+	\center{\includegraphics[width=0.9\textwidth]{figuras/automato1.eps}}
 	\caption{\label{fig:automato1} Configuração inicial do autômato adaptativo}
 \end{figure}
 
@@ -119,7 +116,7 @@ O caminho definido pelos estados de $0$ a $N$, deste ponto adiante chamado de ca
 A figura \ref{fig:automato2} mostra o mesmo autômato da figura anterior após uma ação adaptativa disparada ao receber um símbolo diferente de 73 no estado 5.
 
 \begin{figure}[htb]
-	\center{\includegraphics[bb=0 0 3792 693 width=\textwidth]{figuras/automato2.png}}
+	\center{\includegraphics[width=0.8\textwidth]{figuras/automato2.eps}}
 	\caption{\label{fig:automato2} Configuração do autômato após ação adaptativa}
 \end{figure}
 
@@ -233,7 +230,7 @@ Por outro lado, se o autômato eventualmente atingir o estado final, a cadeia é c
 
 Para esta análise, dois aspectos são considerados. O primeiro deles é direto e correponde à quantidade de erros observados. Quanto menor o número de erros mais próximas são as cadeias. O segundo aspecto envolve um procedimento mais elaborado. Note que a partir da cadeia que originou o autômato e da lista de códigos de resultados, é possível construir uma cadeia artificial, corrigindo os erros registrados. Assim se, por exemplo, uma nota for omitida, pode-se readicioná-la à cadeia. O objetivo desta reconstrução é possibilitar a aplicação dos métodos numéricos de comparação nota a nota apresentados anteriormente. Principalmente com relação às durações das notas, aspecto que fora desconsiderado nesta nova abordagem até então.
 
-Algumas considerações são importantes no que tange à reconstrução da cadeia com base nas informações de erros. Para notas trocadas (caso~\ref{i:nota}), deve-se manter a duração original. Para notas omitidas, estas deverão ser readicionadas com duração zero para que não haja interferência no contorno temporal geral da cadeia. A nota é adicionada somente para alinhar o emparelhamento necessário para a comparação nota a nota. E, por fim, para o o caso de notas adicionadas, estas são retiradas e sua duração é incorporada à nota imediatamente anterior.
+Algumas considerações são importantes no que tange à reconstrução da cadeia com base nas informações de erros. Para notas trocadas, deve-se manter a duração original. Para notas omitidas, estas deverão ser readicionadas com duração zero para que não haja interferência no contorno temporal geral da cadeia. A nota é adicionada somente para alinhar o emparelhamento necessário para a comparação nota a nota. E, por fim, para o o caso de notas adicionadas, estas são retiradas e sua duração é incorporada à nota imediatamente anterior.
 
 Com base nestas considerações o algoritmo de comparação constrói a cadeia corrigida e, executando o procedimento de comparação de durações, consegue obter um valor numérico para a distância das cadeias com relação às durações de suas notas.
 
