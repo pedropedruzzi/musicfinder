@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Scanner;
 
 import edu.pcs.musicfinder.MelodyFileUtils;
+import edu.pcs.musicfinder.MelodyUtils;
 import edu.pcs.musicfinder.RealNote;
+import edu.pcs.musicfinder.SoundTrackExporter;
 import edu.pcs.musicfinder.SoundTrackExtractor;
 import edu.pcs.musicfinder.Test;
 
@@ -338,10 +340,10 @@ public class Automaton {
 			System.out.println(n.getPitch());
 		}
 		
-		Test.modify(melody, 1, 0, 1.5, 0.3);
+		MelodyUtils.modify(melody, 1, 0, 1.5, 0.3);
 		
 		MelodyFileUtils.toFile(melody, "out/trilha1.melody");
-		Test.recordNotes(melody, "out/trilha1.mid");
+		SoundTrackExporter.export(melody, "out/trilha1.mid");
 		
 		System.out.println("Cadeia distorcida (em Hertz)");
 		for (RealNote n : melody) {
@@ -372,7 +374,7 @@ public class Automaton {
 			int success = 0;
 			for (int i = 0; i < 10000; i++) {
 				List<RealNote> track = fromKeys(ref);
-				Test.modify(track, 1, 0, pitchFix, pitchVar);
+				MelodyUtils.modify(track, 1, 0, pitchFix, pitchVar);
 				double[] keys = toKeys(track);
 				int[] input = quantize(keys);
 				if (a.process(input, 0)) success += 1;
@@ -403,7 +405,7 @@ public class Automaton {
 				double pitchVar = s.nextDouble();
 				List<RealNote> track = fromKeys(ref);
 
-				Test.modify(track, 1, 0, pitchFix, pitchVar);
+				MelodyUtils.modify(track, 1, 0, pitchFix, pitchVar);
 				double[] keys = toKeys(track);
 				System.out.println("Cadeia gerada:");
 				System.out.println(Arrays.toString(keys));
