@@ -1,0 +1,178 @@
+1.410	89,1614368051	89
+1.315	87,9538484479	88
+1.004	83,2822060851	83
+860	80,6019976328	81
+850	80,39951181	80
+835	80,091272086	80
+920	81,769564049	82
+1.010	83,3853583694	83
+1.250	87,0762319923	87
+1.120	85,175079641	85
+990	83,0391000173	83
+920	81,769564049	82
+MATCH!
+Wave
+start = 313
+err = 108
+[OK, EXCHANGE, OK, EXCHANGE, OK, OK]
+distance = 0.00620139915501931
+0,6	0,2187497816
+0,6	0,2187497816
+0,5	0,2098212191
+1,1	0,2366069066
+1,6	0,6473207823
+
+MATCH!
+Hino Nacional Brasileiro
+start = 185
+err = 108
+[OK, OK, OK, EXCHANGE, OK]
+distance = 0.004210606304834843
+0,6	0,2325818485
+0,6	0,2571719999
+0,5	0,2172130039
+1,1	0,2643441274
+
+MATCH!
+Hey Jude
+start = 33
+err = 109
+[OK, OK, OK]
+distance = 0.0
+0,6	0,405404985
+0,6	0,405404985
+
+MATCH!
+Money For Nothing
+start = 3
+err = 109
+[OK, OK, EXCHANGE, OK, EXCHANGE]
+distance = 0.039878754969294924
+0,6	0,5876850206
+0,6	0,6483191894
+0,5	0,6436550226
+1,1	0,6343266889
+
+MATCH!
+Hino Do Corinthians
+start = 6
+err = 109
+[OK, OK, EXCHANGE, OK, EXCHANGE]
+distance = 0.001433486323974551
+0,6	0,5000000149
+0,6	0,5000000149
+0,5	0,5000000149
+1,1	1,0000000298
+
+MATCH!
+Palco
+start = 262
+err = 109
+[OK, OK, OMISSION, OK, OK, EXCHANGE]
+distance = 0.06832264104896194
+0,6	0,4629633389
+0,6	0,333333604
+0	0,3148150705
+0,5	0,2777780034
+1,1	1,4212974505
+
+MATCH!
+Penny Lane
+start = 103
+err = 109
+[OK, OK, EXCHANGE, OK, EXCHANGE]
+distance = 0.06313623183910323
+0,6	0,521739006
+0,6	0,521739006
+0,5	0,521739006
+1,1	0,260869503
+
+MATCH!
+Chega De Saudade
+start = 3
+err = 109
+[OK, OK, OK]
+distance = 0.10331612562162268
+0,6	0,4285710119
+0,6	1,0714275297
+
+MATCH!
+Yesterday
+start = 8
+err = 110
+[OK, OK]
+distance = 0.0
+0,6	0,3000000045
+
+MATCH!
+Aquarela
+start = 3
+err = 110
+[OK, OK]
+distance = 0.0
+0,6	0,3625000054
+
+MATCH!
+Sunday Bloody Sunday
+start = 22
+err = 110
+[OK, OK]
+distance = 3.0814879110195774E-33
+0,6	0,2932691849
+
+MATCH!
+Tarde Em Itapoã
+start = 3
+err = 110
+[OK, OK]
+distance = 0.0
+0,6	0,2139420877
+
+MATCH!
+Marvin
+start = 114
+err = 110
+[OK, OK]
+distance = 0.0
+0,6	0,1630434953
+
+MATCH!
+País Tropical
+start = 5
+err = 110
+[OK, OK]
+distance = 0.0
+0,6	0,2374997691
+
+MATCH!
+With Or Without You
+start = 8
+err = 110
+[OK, OK]
+distance = 0.0
+0,6	0,2777775005
+
+MATCH!
+Ode To Joy
+start = 5
+err = 110
+[OK, OK]
+distance = 0.0
+0,6	0,5784310633
+
+MATCH!
+Tico Tico No Fubá
+start = 0
+err = 110
+[OK, OK]
+distance = 0.0
+0,6	0,1123269028
+
+MATCH!
+Você É Linda
+start = 1
+err = 110
+[OK, OK]
+distance = 0.0
+0,6	0,2999997055
+

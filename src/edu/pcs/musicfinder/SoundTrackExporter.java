@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
@@ -48,18 +49,18 @@ public class SoundTrackExporter {
 		for (RealNote n : st) {
 			if (n.getPitch() != RealNote.SILENCE && underLimits(n.getPitch())) {
 				try {
-					t.add(new MidiEvent(new PitchWheelMessage(channel, SoundTrackExtractor.pitchToKeyResidual(n.getPitch())), tick));
+					t.add(new MidiEvent(new PitchWheelMessage(channel, MelodyUtils.pitchToKeyResidual(n.getPitch())), tick));
 					//logger.debug("pitch = " + n.getPitch());
 					//logger.debug("key = " + SoundTrackExtractor.pitchToKey(n.getPitch()));
 					//logger.debug("res = " + SoundTrackExtractor.pitchToKeyResidual(n.getPitch()));
 					ShortMessage msg = new ShortMessage();
-					msg.setMessage(ShortMessage.NOTE_ON, channel, SoundTrackExtractor.pitchToKey(n.getPitch()), velocity);
+					msg.setMessage(ShortMessage.NOTE_ON, channel, MelodyUtils.pitchToKey(n.getPitch()), velocity);
 					t.add(new MidiEvent(msg, tick));
 					
 					tick += n.getDuration() * 300;
 					
 					msg = new ShortMessage();
-					msg.setMessage(ShortMessage.NOTE_OFF, channel, SoundTrackExtractor.pitchToKey(n.getPitch()), velocity);
+					msg.setMessage(ShortMessage.NOTE_OFF, channel, MelodyUtils.pitchToKey(n.getPitch()), velocity);
 					t.add(new MidiEvent(msg, tick));
 				} catch (InvalidMidiDataException e) {
 					e.printStackTrace();
@@ -68,6 +69,14 @@ public class SoundTrackExporter {
 			} else {
 				tick += n.getDuration() * 300;
 			}
+		}
+		
+		try {
+			MetaMessage eot = new MetaMessage();
+			eot.setMessage(0x2f, new byte[0], 0);
+			t.add(new MidiEvent(eot, tick));
+		} catch (InvalidMidiDataException e) {
+			e.printStackTrace();
 		}
 		
 		try {

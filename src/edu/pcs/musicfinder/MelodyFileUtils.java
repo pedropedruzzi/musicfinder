@@ -29,6 +29,33 @@ public class MelodyFileUtils {
 		return track;
 	}
 	
+	public static List<RealNote> fromFile2(String filename) throws FileNotFoundException {
+		List<RealNote> track = new LinkedList<RealNote>();
+
+		Scanner s = new Scanner(new File(filename));
+		s.useLocale(Locale.US);
+		
+		double t = 0;
+		
+		while (s.hasNextDouble()) {
+			double start = s.nextDouble();
+			double end = s.nextDouble();
+			double pitch = s.nextDouble();
+			
+			if (start >= end || start < t) throw new AssertionError();
+			
+			if (start != t)
+				track.add(new RealNote(RealNote.SILENCE, start - t));
+			
+			track.add(new RealNote(pitch, end - start));
+			t = end;
+		}
+		
+		s.close();
+		
+		return track;
+	}
+	
 	public static void toFile(List<RealNote> track, String filename) {
 		FileWriter fw = null;
 		

@@ -1,5 +1,7 @@
 package edu.pcs.musicfinder.automaton;
 
+import java.io.PrintStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,7 +14,6 @@ import edu.pcs.musicfinder.MelodyFileUtils;
 import edu.pcs.musicfinder.MelodyUtils;
 import edu.pcs.musicfinder.RealNote;
 import edu.pcs.musicfinder.SoundTrackExporter;
-import edu.pcs.musicfinder.SoundTrackExtractor;
 import edu.pcs.musicfinder.Test;
 
 public class Automaton {
@@ -22,17 +23,7 @@ public class Automaton {
 	private State first;
 	private List<Status> status;
 	
-	private static enum Status { OK, EXCHANGE, ADDITION, OMISSION }
-	
-	public static void testAutomaton() {
-		Automaton a = new Automaton(new int[] { 3, 4, 5, 6, 7, 8 });
-		a.slidingWindow(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13});
-	}
-	
-	public void slidingWindow(int[] input) {
-		for (int i = 0; i < input.length; i++)
-			System.out.println("start = " + i + ": " + process(input, i));
-	}
+	public static enum Status { OK, EXCHANGE, ADDITION, OMISSION }
 	
 	public Automaton(int[] string) {
 		length = string.length;
@@ -45,6 +36,11 @@ public class Automaton {
 	
 	public List<Status> getStatus() {
 		return status;
+	}
+	
+	public void slidingWindow(int[] input) {
+		for (int i = 0; i < input.length; i++)
+			System.out.println("start = " + i + ": " + process(input, i));
 	}
 	
 	public boolean process(int[] input, int start) {
@@ -189,26 +185,54 @@ public class Automaton {
 		
 	}
 	
+	public static void testAutomaton() {
+		Automaton a = new Automaton(new int[] { 3, 4, 5, 6, 7, 8 });
+		a.slidingWindow(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13});
+	}
 	
+	public static Automaton fromMelody(List<RealNote> melody) {
+		return new Automaton(quantizeFromMelody(melody));
+	}
 	
+	public static int[] quantizeFromMelody(List<RealNote> melody) {
+		return quantizeFromMelody(melody, null);
+	}
+	
+	public static int[] quantizeFromMelody(List<RealNote> melody, PrintStream out) {
+		melody = MelodyUtils.removeSilence(melody);
+		double[] keys = toKeys(melody);
+		int[] cadeia = quantize(keys);
+		//int[] cadeia = quantizeRelative(keys);
+		
+		if (out != null) printChart(melody, keys, cadeia, out);
+		
+		return cadeia;
+	}
+	
+	private static void printChart(List<RealNote> melody, double[] keys, int[] cadeia, PrintStream out) {
+		out.println("Tabela de quantização:");
+		NumberFormat nf = NumberFormat.getNumberInstance();
+		nf.setMaximumFractionDigits(10);
+		for (int i=0; i<keys.length; i++) {
+			out.println(nf.format(melody.get(i).getPitch()) + "\t" + nf.format(keys[i]) + "\t" + cadeia[i]);
+		}
+		out.println();
+	}
 
 	public static double[] toKeys(List<RealNote> cadeia) {
 		double[] keys = new double[cadeia.size()];
 		for (int i = 0; i < keys.length; i++) {
-			keys[i] = SoundTrackExtractor.pitchToKeyDouble(cadeia.get(i).getPitch());
+			keys[i] = MelodyUtils.pitchToKeyDouble(cadeia.get(i).getPitch());
 		}
-		
 		return keys;
 	}
 	
 	public static double offsetIterative(double[] keys, int steps) {
 		double k = 0;
-		
 		for (int i = 0; i < steps; i++) {
 			System.out.println("k = " + k + ": E = " + quantizationError(keys, k));
 			k = offset2(keys, k);
 		}
-		
 		return k;
 	}
 
@@ -316,6 +340,18 @@ public class Automaton {
 		return string;
 	}
 	
+	private static int[] quantizeRelative(double[] keys) {
+		int[] string = new int[keys.length];
+		
+		double offset = 0;
+		for (int i = 0; i < keys.length; i++) {
+			string[i] = (int) Math.round(keys[i] - offset);
+			offset = keys[i] - string[i];
+		}
+		
+		return string;
+	}
+	
 	private static double quantizationError(double[] keys, double k) {
 		double sum = 0;
 		
@@ -332,7 +368,7 @@ public class Automaton {
 		
 		System.out.println("Cadeia original (MIDI)");
 		for (RealNote n : melody) {
-			System.out.println(SoundTrackExtractor.pitchToKey(n.getPitch()));
+			System.out.println(MelodyUtils.pitchToKey(n.getPitch()));
 		}
 		
 		System.out.println("Cadeia original (em Hertz)");
@@ -441,7 +477,7 @@ public class Automaton {
 	private static List<RealNote> fromKeys(int[] keys) {
 		List<RealNote> track = new ArrayList<RealNote>(keys.length);
 		for (int key : keys) {
-			track.add(new RealNote(SoundTrackExtractor.keyToPitch(key), 1));
+			track.add(new RealNote(MelodyUtils.keyToPitch(key), 1));
 		}
 		return track;
 	}
