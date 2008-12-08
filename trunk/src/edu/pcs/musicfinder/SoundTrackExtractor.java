@@ -1,7 +1,6 @@
 package edu.pcs.musicfinder;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
-import javax.sound.midi.Track;
 
 import org.apache.log4j.Logger;
 
@@ -38,9 +36,14 @@ public class SoundTrackExtractor {
 		float div = sequence.getDivisionType();
 		
 		if (div == 0) {
-			logger.warn("tempo-based resolution. assuming 100 beats per minute.");
-			float bpm = 100;
-			tick = 60/(bpm*sequence.getResolution());
+			// in microseconds per quarter note
+			int tempo = getTempo();
+			tick = tempo/(sequence.getResolution() * 1000000f);
+			if (false) {
+				logger.warn("tempo-based resolution. assuming 100 beats per minute.");
+				float bpm = 100;
+				tick = 60/(bpm*sequence.getResolution());
+			}
 		} else {
 			tick = 1/(div*sequence.getResolution());
 		}
@@ -49,20 +52,7 @@ public class SoundTrackExtractor {
 	}
 
 	public List<RealNote> extractReal(int channel) {
-		List<Note> st = extract(channel);
-		List<RealNote> notes = new ArrayList<RealNote>(st.size());
-		for (Note n : st) {
-			double pitch;
-			
-			if (n.getKey() == Note.SILENCE)
-				pitch = RealNote.SILENCE;
-			else
-				pitch = keyToPitch(n.getKey());
-			
-			notes.add(new RealNote(pitch, n.getDuration() * tick));
-		}
-		
-		return notes;
+		return MelodyUtils.toReal(extract(channel), tick);
 	}
 
 	public List<Note> extract(int channel) {
@@ -111,26 +101,8 @@ public class SoundTrackExtractor {
 		return builder.track;
 	}
 	
-	public void testeTempo() {
-		for (Track track : sequence.getTracks()) {
-			for (int i=0; i<track.size(); i++) {
-				MidiEvent event = track.get(i);
-				MidiMessage message = event.getMessage();
-				if (message instanceof MetaMessage) {
-					MetaMessage mm = (MetaMessage) message;
-					if (mm.getType() == MidiUtils.TEMPO) {
-						byte[] data = mm.getData();
-						int tempo = (data[0] << 16) | (data[1] << 8) | data[2];
-						System.out.println("tempo = " + tempo);
-					} else {
-						//System.out.println("META type = " + mm.getType());
-					}
-				}
-			}
-		}
-	}
-	
-	public void testeTempo2() {
+	private int getTempo() {
+		int ret = 600000;
 		reader.reset();
 		for (MidiEvent event : reader) {
 			MidiMessage message = event.getMessage();
@@ -138,13 +110,13 @@ public class SoundTrackExtractor {
 				MetaMessage mm = (MetaMessage) message;
 				if (mm.getType() == MidiUtils.TEMPO) {
 					byte[] data = mm.getData();
-					int tempo = (data[0] << 16) | (data[1] << 8) | data[2];
-					System.out.println("tempo = " + tempo);
-				} else {
-					//System.out.println("META type = " + mm.getType());
+					int tempo = ((data[0] & 0xff) << 16) | ((data[1] & 0xff) << 8) | (data[2] & 0xff);
+					logger.debug("tempo = " + tempo);
+					if (ret == 0) ret = tempo;
 				}
 			}
 		}
+		return ret;
 	}
 
 	public double ratioPoliphonic(int channel) {
@@ -166,14 +138,7 @@ public class SoundTrackExtractor {
 				throw new RuntimeException("running status!");
 			}
 			
-			if (message instanceof MetaMessage) {
-				MetaMessage mm = (MetaMessage) message;
-				if (mm.getType() == MidiUtils.TEMPO) {
-					byte[] data = mm.getData();
-					int tempo = (data[0] << 16) | (data[1] << 8) | data[2];
-					System.out.println("tempo = " + tempo);
-				}
-			} else if (message instanceof ShortMessage) {
+			if (message instanceof ShortMessage) {
 				ShortMessage sm = (ShortMessage) message;
 				if (channel == sm.getChannel()) {
 					if (sm.getCommand() == ShortMessage.NOTE_ON && sm.getData2() != 0) {
@@ -197,7 +162,7 @@ public class SoundTrackExtractor {
 		else return sumN / (double)sum1;
 	}
 	
-	private static class SoundTrackBuilder {
+	public static class SoundTrackBuilder {
 		private int pKey = Note.NO_KEY;
 		private long start = 0;
 		
@@ -209,13 +174,16 @@ public class SoundTrackExtractor {
 		private long curTick = 0;
 
 		private List<Note> track = new LinkedList<Note>();
+		
+		public List<Note> getTrack() {
+			return track;
+		}
 
 		public void noteOn(long tick, int key, int velocity) {
 			if (velocity == 0) {
 				noteOff(tick, key, velocity);
 			} else {
 				if (pKey != Note.NO_KEY) {
-					//if (key == pKey) return;
 					if (DO_NOT_IGNORE) {
 						noteOff(tick, pKey, velocity); // channel e velocity estao invalidos!
 						noteOn(tick, key, velocity);
@@ -263,23 +231,6 @@ public class SoundTrackExtractor {
 
 			curTick = end;
 		}
-	}
-	
-	public static double keyToPitch(double key) {
-		return Math.pow(2, (key - 69) / 12d) * 440;
-	}
-	
-	public static int pitchToKey(double pitch) {
-		return (int) Math.round(pitchToKeyDouble(pitch));
-	}
-	
-	public static double pitchToKeyDouble(double pitch) {
-		return 69 + 12 * Math.log(pitch / 440) / Math.log(2);
-	}
-	
-	public static double pitchToKeyResidual(double pitch) {
-		double key = pitchToKeyDouble(pitch);
-		return key - Math.round(key);
 	}
 	
 	public static SoundTrackExtractor open(String midifile) {

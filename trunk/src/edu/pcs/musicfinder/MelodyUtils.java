@@ -18,6 +18,39 @@ public class MelodyUtils {
 			System.out.println(n.getPitch());
 		}
 	}
+	
+	public static double keyToPitch(double key) {
+		return Math.pow(2, (key - 69) / 12d) * 440;
+	}
+	
+	public static int pitchToKey(double pitch) {
+		return (int) Math.round(pitchToKeyDouble(pitch));
+	}
+	
+	public static double pitchToKeyDouble(double pitch) {
+		return 69 + 12 * Math.log(pitch / 440) / Math.log(2);
+	}
+	
+	public static double pitchToKeyResidual(double pitch) {
+		double key = pitchToKeyDouble(pitch);
+		return key - Math.round(key);
+	}
+
+	public static List<RealNote> toReal(List<Note> st, double tick) {
+		List<RealNote> notes = new ArrayList<RealNote>(st.size());
+		for (Note n : st) {
+			double pitch;
+			
+			if (n.getKey() == Note.SILENCE)
+				pitch = RealNote.SILENCE;
+			else
+				pitch = keyToPitch(n.getKey());
+			
+			notes.add(new RealNote(pitch, n.getDuration() * tick));
+		}
+		
+		return notes;
+	}
 
 	public static void toExcelPlot(List<RealNote> x) {
 		double t = 0;
@@ -96,7 +129,7 @@ public class MelodyUtils {
 			distance += (dY - a * dX) * (dY - a * dX);
 		}
 		
-		return distance;
+		return distance / x.size();
 	}
 	
 	public static double pitchDistance(List<RealNote> x, List<RealNote> y) {
