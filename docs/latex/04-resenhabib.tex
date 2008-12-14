@@ -7,26 +7,18 @@ Na presente seção serão apresentados as diversas técnicas nas quais este trabalh
 
 \section{Método dos mínimos quadrados}
 
-O método dos mínimos quadrados é uma técnica matemática de otimização que surgiu no início do século XIX, porém amplamente utilizada até os dias atuais. Este método permite encontrar os parâmetros para uma função modelo $f$ de forma a melhor aproximar uma relação entre grandezas. Esta relação é usualmente dada por um conjunto de pares ordenados $(x_i,y_i)$. Neste caso, se imaginarmos que $f(x_i) \approx y_i$, deseja-se ajustar seus parâmetros de modo a minimizar a soma dos quadrados dos erros: $$S = \sum_{i=1}^n (y_i - f(x_i))^2$$
+O método dos mínimos quadrados é uma técnica matemática de otimização que surgiu no início do século XIX, a partir de necessidade relacionadas a geolocalização. Este método permite encontrar os parâmetros para uma função modelo $f$ de forma a melhor aproximar uma relação entre grandezas. Esta relação é usualmente dada por um conjunto de pares ordenados $(x_i,y_i)$. Neste caso, se imaginarmos que $f(x_i) \approx y_i$, deseja-se ajustar seus parâmetros de modo a minimizar a soma dos quadrados dos erros: $$S = \sum_{i=1}^n (y_i - f(x_i))^2$$
 
 A teoria mostra que para o caso em que a função modelo $f$ é linear com relação aos seus parâmetros, a solução para o problema é única e ocorre quando as derivadas parciais do erro quadrático com relação a cada parâmetro é zero. Estas equações resultam em um sistema linear possível e determinado, de forma que a solução pode ser facilmente obtida utilizando os métodos numéricos de resolução de sistemas lineares.
 
-Para um aprofundamento sobre o método dos mínimos quadrados ou sobre métodos de resolução de sistemas lineares, consulte a eferência ~\ref{calculoNumerico}.
+Para um aprofundamento sobre o método dos mínimos quadrados ou sobre métodos de resolução de sistemas lineares, consulte a referência ~\ref{calculoNumerico}.
 
-\section{Tecnologia adaptativa}
+\section{Adaptatividade}
 
-~\ref{roteiroLTA}
-~\ref{Neto94}
+O conceito de adaptatividade ~\ref{roteiroLTA} está vinculado à característica fundamental que diferencia os assim chamados dispositivos adaptativos dos demais. Um dispositivo adaptativo nada mais é do que um formalismo computacional com capacidade de auto-reconfiguração dinâmica. Como todo formalismo computacional, estes dispositivos tem seu comportamento baseado em um conjunto de regras. A auto-reconfiguração dinâmica significa a possibilidade de estas regras serem modificadas durante a operação do dispositivo.
 
-% TODO %
-Adaptatividade é um conceito ...
-Laboratório de Linguagens e Técnicas Adaptativas
+Na prática, a adaptatividade pode se traduzir de diferentes maneiras. Usualmente, a característica adaptativa é introduzida a dispositivos já definidos, como autômatos finitos, gramáticas, autômatos de pilha, linguagens de programação etc. O que define o comportamento de um autômato finito é o seu conjunto de estados e suas regras de transição de estados. Portanto, um autômato adaptativo ~\ref{Neto94} é como um autômato comum porém a recepção de um símbolo de entrada, além de ocasionar uma transição de estados, opcionalmente pode disparar uma ação adaptativa que irá modificar as regras de transições e o conjunto de estados.
 
-Uso de dispositivos adaptativos. Formalismos computacionais com capacidade de auto-reconfiguração dinâmica (em execução).
+No caso dos autômatos finitos, é simples mostrar que a introdução da adaptatividade torna o dispositivo muito mais poderoso, sob o aspecto de classes de linguagens que o dispositivo é capaz de reconhecer. Porém a teoria nos mostra que os formalismos adaptativos conhecidos até então são equivalentes à máquina de Turing.
 
-linguagens formais e autômatos, complexidade computacional, modelos de computação, paradigmas de programação sintaxe e semântica formal, máquinas virtuais, ambientes de execução.
-
-
-\begin{quote}
-A maior vantagem dos dispositivos adaptativos é a sua facilidade de uso, sua relativa simplicidade e o fato de ser muito rara a necessidade de existir uma descrição completamente especificada do comportamento do dispositivo para que ele possa ser utilizado. Em lugar disso, sua operação pode ser descrita de forma incremental, e seu comportamento, programado para se alterar dinamicamente em resposta aos estímulos de entrada recebidos. Adicionalmente, como o conjunto de regras que definem o seu comportamento também se altera ao longo da sua operação, pode-se dizer que o próprio dispositivo adaptativo implementa de alguma forma a representação do conhecimento adquirido através de sua seqüência recebida de estímulos de entrada.
-\end{quote}
+Apesar desta equivalência, os dispositivos adaptativos não perdem sua relevância. Isto ocorre pelo fato de existirem muitos mecanismos computacionais cuja descrição completa não é explícita. Nestes casos, torna-se inviável a implementação destes a partir de formalismos estáticos. Por outro lado, uma descrição ``indireta'' e incremental eventualmente pode ser muito mais facilmente concebida, e servir de base para a implementação do mecanismo através de um formalismo adaptativo.
