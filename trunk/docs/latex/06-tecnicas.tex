@@ -39,7 +39,7 @@ S_d = \sum_{i=1}^N (A.d_{2i} - d_{1i})^2
 S_p = \sum_{i=1}^N (\log p_{2i} + B - \log p_{1i})^2
 \end{equation}
 
-A teoria \cite{?} nos mostra que o mínimo de cada uma destas funções ocorre quando suas derivadas com relação ao parâmetro atingem o valor zero:
+A teoria ~\ref{calculoNumerico} nos mostra que o mínimo de cada uma destas funções ocorre quando suas derivadas com relação ao parâmetro atingem o valor zero:
 
 \[ \frac{\partial S_d}{\partial A} = 0 \]
 \[ 2 \sum_{i=1}^N (A.d_{2i} - d_{1i}) d_{2i} = 0 \]
@@ -69,10 +69,12 @@ Conforme já discutido anteriormente estas imperfeições ocorrem com certa freqüên
 
 No capítulo ~\ref{chap:historico} diversas abordagens dadas a este problema foram apresentadas. Porém não se localizou na literatura nenhum material que cite o uso de técnicas adaptativas para este problema. Propõe-se, então, um algoritmo baseado no formalismo dinâmico dos autômatos adaptativos \cite{Neto94}.
 
-Tanto para a construção do autômato quanto para a execução deste, as notas precisam ser encaradas como símbolos de um alfabeto de entrada. Neste sentido suas durações são ignoradas e suas alturas passam por um processo de quantização a fim de assumirem valores discretos correspondentes às notas de um piano \cite{Burns99}. Estes valores discretos formam o alfabeto do autômato.
+Tanto para a construção do autômato quanto para a execução deste, as notas precisam ser encaradas como símbolos de um alfabeto finito. Neste sentido suas durações são ignoradas e suas alturas passam por um processo de quantização em que assumem valores inteiros correspondentes às notas de um piano \cite{Burns99}. Estes valores discretos formam o alfabeto de entrada do autômato.
 
 \subsection{Quantização das alturas}
 O objetivo do processo de quantização é converter os valores contínuos das alturas em um conjunto discreto de números inteiros. O MIDI (Musical Instrument Digital Interface) é um padrão de facto que define um protocolo para comunicação entre instrumentos musicais eletrônicos e outros equipamentos de áudio. Entre diversas outras padronizações, o MIDI define um código para representação das notas do sistema de afinação ocidental (notas do piano). Este código é um número inteiro entre 0 e 127, que é capaz de representar muito além da capacidade audível da maioria dos seres humanos. A nota 0, por exemplo, é uma nota Dó cinco oitavas abaixo do Dó central e corresponde a uma freqüência de 8,176 Hz. Iremos utilizar o código de notas MIDI como alfabeto do autômato.
+
+% falar dos dois métodos
 
 O processo de quantização se inicia convertendo os valores em Hertz para o padrão MIDI, porém sem perder a parte fracionária do resultado. A relação de conversão \cite{?} é a seguinte:
 \[p = 69 + 12\times\log_2 { \left(\frac {f}{440\,\mbox{Hz}} \right) }.\]
