@@ -145,9 +145,10 @@ public class Test {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException {
-		liveTest();
+		//liveTest();
 		//processInput();
 		//extractMelodyTracks("resource/birthday.mid");
+		processAll();
 	}
 	
 	public static void liveTest() throws FileNotFoundException {
@@ -295,6 +296,9 @@ public class Test {
 			// corrigir e comparar duraçoes
 			List<RealNote> fixed = fix(track, m.status);
 			List<RealNote> match = findMatch(m.line, m.start, fixed.size());
+			
+			if (basename != null)
+				SoundTrackExporter.export(match, basename + "_match_" + m.song.getMetadata().getTitle() + ".mid");
 			
 			double d = MelodyUtils.distance(fixed, match);
 			
