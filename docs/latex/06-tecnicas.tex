@@ -1,10 +1,141 @@
 \chapter{Técnicas e procedimentos usados}
 \label{chap:tecnicas}
-% TODO
-Neste capítulo será descrito em detalhes todo o desenvolvimento do presente trabalho. Serão mostradas as técnicas utilizadas, seus fundamentos e objetivos.
 
-\section{Processo de extração de notas}
-% TODO
+Este capítulo descreve detalhes do sistema desenvolvido, apresentando sua especificação, detalhes de técnicas utilizadas, além de procedimentos envolvidos.
+
+\section{Especificação do sistema}
+
+Propõe-se o desenvolvimento de um módulo de busca por músicas baseado em conteúdo apoiado em técnicas adaptativas, e para teste e avaliação da tecnologia empregada um protótipo de um sistema mais completo será construído.
+
+\subsection{Descrição}
+
+A idéia geral de um sistema de busca está implícita na maioria das pessoas que se utilizam de serviços como os de busca por documentos, nestes serviços, em geral o usuário entra com um trecho do documento que ele procura, e o sistema de busca encontra documentos que mais se aproximem do trecho que o usuário proveu. Analogamente, em um sistema de busca por áudio baseado em consteúdo, o usuário provê um trecho do áudio que deseja encontrar, e o sistema encontra os áudios mais similares.
+
+\subsection{Uso do sistema}
+
+Propõe-se o desenvolvimento de um protótipo de um sistema de buscas por músicas baseado em conteúdo, que receba uma entrada do usuário que corresponde à sua \query, ou seja, algum trecho da música buscada que o usuário reproduza através de um assobio, e em seguida compara com as músicas presentes em seu repositório, calculando a similaridade entre cada música e a \query, a partir das comparações efetuadas, o sistema é capaz de apresentar quais as entradas mais prováveis de corresponderem à música procurada.
+
+Em linhas gerais, a idéia de uso do sistema pode ser vista na Figura ~\ref{fig:usecase}.
+
+\begin{figure}[htb]
+	\center{\includegraphics[width=0.7\textwidth]{figuras/usecase.eps}}
+	\caption{\label{fig:usecase} Caso de uso típico do sistema}
+\end{figure}
+
+\begin{enumerate}
+\item Usuário do sistema
+\item Trecho de música (ou conteúdo) gerado pelo usuário
+\item Sistema de busca
+\item Conjunto de músicas mais próximas do trecho gerado pelo usuário
+\end{enumerate}
+
+\subsection{Requisitos funcionais e Premissas}
+
+Apesar da idéia ser simples, sua complexidade é grande, assim deve-se explicitar alguns requisitos que definirão o sistema, além de premissas que serão assumidas durante o desenvolvimento.
+
+\subsubsection{Entrada de dados}
+o usuário deve fornecer como entrada ao sistema um assobio de um trecho de uma música que deseja buscar, originando a \query \ que será processada. As informações fornecidas pelo usuário, em geral, são muito limitadas e com grandes variações com relação ao conteúdo original, além disso tipicamente o trecho é curto e erros são frequentes. Para fins de processamento da \query \ a origem da mesma é irrelevante, assim, outras formas de entrada que gerassem notas musicais diretamente, como um piano por exemplo, seriam passíveis de utilização. No caso do assobio fornecido pelo usuário, o mesmo deve estar codificado em um formato WAV.
+
+\subsubsection{Tipo de busca}
+O sistema restringe-se a procurar por melodias, ou no caso mais geral, sequências de notas musicais, não sendo adequado portanto para encontrar trechos cantados, por exemplo. Outras formas de busca, devem ser abordadas com diferentes técnicas.
+
+\subsubsection{Espaço de busca}
+O espaço de busca é constituído por músicas em formato MIDI, devidamente preparadas para o ambiente de execução de buscas. Pelo fato dos arquivos MIDI, na maioria dos casos, possuirem diversas trilhas, devem portanto passar por um processo de preparação, onde apenas a trilha mais relevante para a melodia da música é extraída e então adicionada ao repositório.
+
+\subsubsection{Resposta do sistema}
+A resposta do sistema deve conter a lista de músicas do repositório mais similares à entrada do usuário. Para ordenação das músicas um critério de similaridade será definido, ao qual o número de notas em comum (entre uma música e a \query \ fornecida) deverá exercer grande influência.
+
+
+\subsection{Arquitetura do Sistema}
+
+Nesta seção serão apresentadas alguns diagramas a fim de descrever o sistema de uma forma mais específica, mostrando o seu fluxo de informação, seus componentes, e suas interações.
+
+A arquitetura proposta para o protótipo é dividida em componentes, onde cada componente procura implantar uma função bem determinada, de modo que seja facilmente trocável, isso dá abertura para uma evolução contínua do protótipo.
+
+\subsubsection{Fluxo de informação do sistema} O usuário deverá fornecer a entrada ao sistema, que por sua vez, digitalizará e converterá o sinal para um modelo musical que representará o trecho fornecido, ou seja, a \query. Em seguida, esta será apresentada ao módulo de busca do sistema, que analisará a mesma comparando-a com as músicas existentes no repositório. Um dos pilares da comparação é a adaptatividade, que ajusta o comparador principal. Ao fim da comparação com as entradas do repositório, é possível estabelecer o conjunto de músicas mais prováveis de atender à \query \ do usuário. Este fluxo pode ser acompanhado na Figura ~\ref{fig:fluxo}.
+
+\begin{figure}[htb]
+	\center{\includegraphics[width=0.9\textwidth]{figuras/fluxo.eps}}
+	\caption{\label{fig:fluxo} Fluxo de informação do sistema}
+\end{figure}
+
+\subsubsection{Diagrama de componentes} O diagrama de componentes da Figura ~\ref{fig:componentes} mostra como as diversas partes do sistema interagem. Este diagrama é especialmente importante pois ele servirá para isolar partes do sistema, permitindo assim que os componentes evoluam separadamente, podendo-se trocar implementações ou métodos utilizados sem afetar o funcionamento geral do sistema.
+
+\begin{enumerate}
+
+\item \emph{Aquisição do sinal}: É responsável por gravar o áudio produzido pelo usuário, e armazená-lo para que o conversor em seguida possa analisá-lo. Um arquivo WAV é usado para guardar o áudio, já que este tipo de formato apresenta perdas desprezíveis para o processo.
+
+\item \emph{Conversor}: Receberá um sinal de áudio digitalizado, do componente anterior, e extrairá do sinal as notas cantadas pelo usuário, que, juntamente com suas durações, darão origem ao modelo musical que representa o áudio que o usuário gerou.
+
+\item \emph{Comparador}: Recebe dois modelos musicais e os compara utilizando um autômato adaptativo, gerando uma medida de similaridade entre os modelos recebidos.
+
+\item \emph{Repositório}: Armazena as musicas que servem de base para a busca (em formato MIDI), e permite serviços de gerenciamento do repositório.
+
+\item \emph{Ranking}: Ordena uma lista de músicas de acordo com critérios previamente definidos, baseando-se na similaridade e nas informações geradas a partir da comparação.
+
+\item \emph{Buscador}: A partir do modelo musical do assobio do usuário e das músicas contidas no repositório, utiliza o comparador para levantar as medidas de similaridade entre o trecho recebido as músicas existentes no repositório. Após isso, utiliza-se do Ranking para ordenar a lista de músicas, para finalmente apresentar a resposta do sistema.
+
+\end{enumerate}
+
+\begin{figure}[htb]
+	\center{\includegraphics[width=0.9\textwidth]{figuras/componentes.eps}}
+	\caption{\label{fig:componentes} Diagrama de componentes do sistema}
+\end{figure}
+
+\subsection{Escopo}
+
+O sistema proposto é amplo e permeia diversas áreas do conhecimento, assim uma limitação do escopo é fundamental. O foco do trabalho é a utilização de técnicas adaptativas no reconhecimento de padrões musicais, assim o componente de maior importância é naturalmente o \emph{comparador} que é o componente que se utilizará de tais técnicas. Esta é uma aplicação inovadora, e tem o potencial de gerar bons resultados, justificando a concentração dos esforços.
+
+Porém, a validação do \emph{comparador} e a avaliação de seu desempenho depende fundamentalmente dos dados gerados pelos outros componentes. Assim, a idéia foi criar implementações simples, que fossem capazes de prover uma infra-estrutura de teste para o \emph{comparador}, porém tal método não foi aplicável a todos os componentes, como foi o caso do \emph{conversor}, exigindo um certo refino de sua implementação. Assim foi dada uma atenção secundária ao \emph{conversor}, com o fim de poder prover dados reais de teste para o \emph{comparador}. Os outros componentes tiveram implementações simples, porém suficientemente boas para prover uma prova de conceito adequada.
+
+\section{Extração de notas}
+
+A idéia utilizada para extração de notas constitui da quebra o sinal de áudio em diversas janelas de tempo pequenas, extraindo-se em seguida a tranformada de Fourier destas janelas, encontrando-se assim a distribuição de frequências para cada intervalo. A análise destas distribuições permite encontrar os picos de frequência, e a partir destes picos pode-se encontrar as notas entoadas pelo usuário.
+
+Assim, neste sistema o processo de extração de notas envolve dois componentes distintos: o componente de \emph{aquisição de sinal} e o \emph{conversor}, sendo constituído das seguintes fases:
+
+\begin{itemize}
+\item Aquisição do sinal
+\item Extração do espectrograma
+\item Filtro de intensidade
+\item Extração de picos de frequência
+\item Identificação das notas
+\item Geração do modelo musical
+\item Sintetização de áudio
+\end{itemize}
+
+Estas fases são executadas em sequência, até gerar a principal saída: o modelo musical, que proverá a entrada para o sistema de busca, enquanto o áudio sintetizado posteriormente tem o objetivo de prover um feedback do processo de extração de notas, permitindo avaliar a qualidade do sistema. A seguir cada uma destas fases serão detalhadas, mostrando as técnicas utilizadas em cada uma destas.
+
+A técnica descrita faz parte de uma classe de métodos baseados em análise de frequência, diversas abordagens similares foram desenvolvidas ao longo dos anos, em trabalhos como ~\cite{MartinPiszczalski} e ~\cite{PiszczalskiGaller}.
+
+\subsection{Aquisição do sinal}
+O primeiro passo para permitir o reconhecimento é a aquisição do sinal de áudio (assobio) gerado pelo usuário. Isso pode ser facilmente obtido através de um dispositivo de gravação, como um microfone, e um software de captura de áudio. O resultado dessa etapa é armazenada em um arquivo WAV, que reproduz o assobio de forma integral.
+
+\subsection{Extração do espectrograma}
+A partir deste arquivo de áudio se extrai seu espectrograma, que é a transformada de Fourier para cada janela de tempo do sinal. O sinal é particionado em intervalos de tempo regulares, e para cada intervalo a dsitribuição de frequências é calculada. O espectrograma é uma reprodução muito próxima do sinal original, porém, transportado para o domínio da frequência. A fase de cada componente de frequência não é relevante para a análise, porém sua intensidade é extremamente importante, assim, as intensidades de cada componente são calculadas, o resultado pode ser encarado como uma superfície 3D, tendo como eixo X o tempo, eixo Y a frequência e eixo Z a intensidade do sinal.
+
+A Figura ~\ref{fig:wave} mostra o sinal de áudio original de um assobio contendo um trecho da 9.\textordfeminine \ Sinfonia de Beethoven, também conhecido como Ode à Alegria, e a Figura ~\ref{fig:espectrograma} mostra seu espectrograma. Já pelo espectrograma é possível perceber os limiares das notas reproduzidas.
+
+\begin{figure}[htb]
+	\center{\includegraphics[width=0.7\textwidth]{figuras/ode-to-joy1-wav.eps}}
+	\caption{\label{fig:wave} Sinal de áudio de um assobio}
+\end{figure}
+
+\begin{figure}[htb]
+	\center{\includegraphics[width=0.7\textwidth]{figuras/ode-to-joy1-spec.eps}}
+	\caption{\label{fig:espectrograma} Espectrograma do sinal correspondente a um assobio}
+\end{figure}
+
+\subsection{Filtro de intensidade}
+
+\subsection{Extração de picos de frequência}
+
+\subsection{Identificação das notas}
+
+\subsection{Geração do modelo musical}
+
+\subsection{Sintetização de áudio}
+
 
 \section{Representação de notas e melodias}
 \label{sec:notas}
