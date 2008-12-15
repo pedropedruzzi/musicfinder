@@ -5,46 +5,13 @@ Este capítulo apresentará a forma como os conceitos presentes no trabalho se int
 \section{Sistema}
 
 
-\subsection{Descrição}
-
-Propõe-se o desenvolvimento de um protótipo de um sistema de buscas por músicas baseado em conteúdo, este sistema recebe uma entrada do usuário que corresponde à sua \query, ou seja, algum trecho da música buscada que o usuário reproduza através de um assobio. O sistema recebe a \query \ e em seguida compara com as músicas presentes em seu repositório, calculando a similaridade entre cada música e a \query, a partir das comparações efetuadas, o sistema é capaz de apresentar quais as entradas mais prováveis de corresponderem à música procurada.
-
-Em linhas gerais, a idéia de uso do sistema pode ser vista na Figura ~\ref{fig:usecase}.
-
-\begin{figure}[htb]
-	\center{\includegraphics[width=0.7\textwidth]{figuras/usecase.eps}}
-	\caption{\label{fig:usecase} Caso de uso típico do sistema}
-\end{figure}
-
-\begin{enumerate}
-\item Usuário do sistema
-\item Trecho de música (ou conteúdo) gerado pelo usuário
-\item Sistema de busca
-\item Conjunto de músicas mais próximas do trecho gerado pelo usuário
-\end{enumerate}
 
 
 
-\subsubsection{Espaço de busca}
-
-O espaço de busca é constituído por músicas em formato MIDI, devidamente preparadas para o ambiente de execução de buscas. Pelo fato dos arquivos MIDI, na maioria dos casos, possuirem diversas trilhas, devem portanto passar por um processo de preparação, onde apenas a trilha mais relevante da música é extraída e então adicionada ao repositório. Devido ao foco dado ao sistema este processo se desenvolve manualmente, através de uma análise humana de cada trilha, escolhendo a mais relevante.
 
 
-\subsubsection{Entrada de dados}
-
-o usuário deve fornecer como entrada ao sistema um assobio de um trecho de uma música que deseja buscar, originando a \query \ que será processada. As informações fornecidas pelo usuário, em geral, são muito limitadas e com grandes variações com relação ao conteúdo original, além disso tipicamente o trecho é curto e erros são frequentes. Para fins de processamento da \query \ a origem da mesma é irrelevante, assim, outras formas de entrada que gerassem notas musicais, como um piano por exemplo, seriam passíveis de utilização.
 
 
-\subsection{Arquitetura do Sistema}
-
-A arquitetura proposta para o protótipo é dividida em componentes, conforme pode ser visto na Figura ~\ref{fig:arquitetura}, cada componente procura implantar uma função bem determinada, de modo que seja facilmente trocável, isso dá abertura para uma evolução contínua do protótipo.
-
-\paragraph*{Visão geral} O usuário deverá fornecer a entrado ao sistema, que por sua vez, digitalizará e converterá o sinal para um modelo musical que representará o trecho fornecido, ou seja, a \query. Em seguida, esta será apresentada ao componente de busca do sistema, que analisará a mesma comparando-a com as músicas existentes no repositório. Um dos pilares da comparação é a adaptatividade, que ajusta o comparador principal. Ao fim da comparação com as entradas do repositório, é possível estabelecer o conjunto de músicas mais prováveis de atender à \query \ do usuário.
-
-\begin{figure}[htb]
-	\center{\includegraphics[width=0.85\textwidth]{figuras/arquitetura.eps}}
-	\caption{\label{fig:arquitetura} Arquitetura do sistema}
-\end{figure}
 
 Componentes da arquitetura:
 
