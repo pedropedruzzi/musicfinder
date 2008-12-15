@@ -112,7 +112,7 @@ A técnica descrita faz parte de uma classe de métodos baseados em análise de fre
 O primeiro passo para permitir o reconhecimento é a aquisição do sinal de áudio (assobio) gerado pelo usuário. Isso pode ser facilmente obtido através de um dispositivo de gravação, como um microfone, e um software de captura de áudio. O resultado dessa etapa é armazenada em um arquivo WAV, que reproduz o assobio de forma integral.
 
 \subsection{Extração do espectrograma}
-A partir deste arquivo de áudio se extrai seu espectrograma, que é a transformada de Fourier para cada janela de tempo do sinal. O sinal é particionado em intervalos de tempo regulares, e para cada intervalo a dsitribuição de frequências é calculada. O espectrograma é uma reprodução muito próxima do sinal original, porém, transportado para o domínio da frequência. A fase de cada componente de frequência não é relevante para a análise, porém sua intensidade é extremamente importante, assim, as intensidades de cada componente são calculadas, o resultado pode ser encarado como uma superfície 3D, tendo como eixo X o tempo, eixo Y a frequência e eixo Z a intensidade do sinal.
+A partir deste arquivo de áudio se extrai seu espectrograma, que é a transformada de Fourier para cada janela de tempo do sinal. O sinal é particionado em intervalos de tempo regulares, e para cada intervalo a dsitribuição de frequências é calculada. O espectrograma é uma reprodução muito próxima do sinal original, porém, transportado para o domínio da frequência. A fase de cada componente de frequência não é relevante para a análise, porém sua intensidade é extremamente importante, assim, as intensidades de cada componente são calculadas, o resultado pode ser encarado como uma superfície 3D, tendo como eixo X o tempo, eixo Y a frequência e eixo Z a intensidade do sinal (em \emph{dB}).
 
 A Figura ~\ref{fig:wave} mostra o sinal de áudio original de um assobio contendo um trecho da 9.\textordfeminine \ Sinfonia de Beethoven, também conhecido como Ode à Alegria, e a Figura ~\ref{fig:espectrograma} mostra seu espectrograma. Já pelo espectrograma é possível perceber os limiares das notas reproduzidas.
 
@@ -127,15 +127,54 @@ A Figura ~\ref{fig:wave} mostra o sinal de áudio original de um assobio contendo
 \end{figure}
 
 \subsection{Filtro de intensidade}
+O espectrograma original possui uma distribuição de frequências contendo diversas componentes provenientes de ruído, ou de intensidade muito baixa, que são pouco relevantes para a identificação das notas reproduzidas pelo usuário, assim aplica-se um filtro de intensidade, eliminando as frequências de baixa intensidade, produzindo assim um espectro mais simples de ser trabalhado. O resultado da aplicação deste filtro pode ser visto na Figura ~\ref{fig:espectrograma-filtro}.
+
+\begin{figure}[htb]
+	\center{\includegraphics[width=0.7\textwidth]{figuras/ode-to-joy1-spec-filter.eps}}
+	\caption{\label{fig:espectrograma-filtro} Espectrograma após aplicação do filtro de intensidade}
+\end{figure}
 
 \subsection{Extração de picos de frequência}
+Após a eliminação do ruído, o sinal é analisado, extraindo-se os picos de frequências, que em geral representam o contorno da melodia que o usuário tentou reproduzir. Este contorno de frequências servirá de base para a identificação das notas, o resultado pode ser visto na Figura ~\ref{fig:espectrograma-picos}.
 
-\subsection{Identificação das notas}
+\begin{figure}[htb]
+	\center{\includegraphics[width=0.7\textwidth]{figuras/ode-to-joy1-peaks.eps}}
+	\caption{\label{fig:espectrograma-picos} Espectrograma após extração dos picos de frequência}
+\end{figure}
 
-\subsection{Geração do modelo musical}
+\subsection{Identificação das notas e Geração do modelo musical}
+A partir dos picos de frequências encontrados na etapa anterior, já é possível, visualmente, identificar aproximadamente as notas (início, fim e frequência). Assim, como o objetivo do trabalho consistia da criação de um prtótipo que teria o fim de testar e avaliar o desempenho do mecanismo de comparação adaptativo, percebe-se que não seria necessário avançar além deste ponto na extração de notas, já que com tais resultados seria possivel extrair dados de testes reais para o \emph{comparador}.
+
+Os dados extraídos dão origem ao modelo musical que servirá como uma representação do áudio original, este modelo pode ser visto como uma tabela, que possui a lista das notas geradas pelo usuário, um exemplo pode ser visto na Tabela ~\ref{table:ode-to-joy1}.
+
+\begin{table}[ht]
+\caption{Notas extraídas a partir do espectrograma}
+\centering
+\begin{tabular}{c c c c}
+\hline\hline
+Nota & Início & Fim & Frequência \\
+[0.5ex] \hline
+ 1 & 0.0174 & 0.3483 & 1277.2 \\
+ 2 & 0.4586 & 0.8533 & 1273.2 \\
+ 3 & 0.9172 & 1.2945 & 1370.1 \\
+ 4 & 1.3468 & 1.7125 & 1573.3 \\
+ 5 & 1.8460 & 2.1595 & 1573.3 \\
+ 6 & 2.3046 & 2.6122 & 1407.7 \\
+ 7 & 2.7516 & 3.1057 & 1283.9 \\
+ 8 & 3.2044 & 3.4540 & 1098.2 \\
+ 9 & 3.7326 & 3.9706 & 944.77 \\
+10 & 4.1796 & 4.4873 & 948.81 \\
+11 & 4.6150 & 4.8414 & 1092.8 \\
+12 & 5.1316 & 5.3348 & 1267.8 \\
+13 & 5.6018 & 5.7992 & 1265.1 \\
+14 & 6.3042 & 6.8557 & 1102.2 \\
+[1ex] \hline
+\end{tabular}
+\label{table:ode-to-joy1}
+\end{table}
 
 \subsection{Sintetização de áudio}
-
+A partir do modelo extraído do áudio é possível criar um arquivo MIDI contendo as notas encontradas, com a reprodução deste arquivo é possível avaliar o desempenho do processo de extração de notas, além de avaliar também a qualidade dos dados que serão providos para a busca. Uma avaliação simples e imediata, seria a comparação auditiva do arquivo contendo as notas extraídas com o arquivo contendo o aúdio original do assobio.
 
 \section{Representação de notas e melodias}
 \label{sec:notas}
