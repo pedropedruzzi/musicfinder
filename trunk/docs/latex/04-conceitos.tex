@@ -3,7 +3,31 @@
 Na presente seção serão apresentados os diversos conceitos nas quais este trabalho se fundamenta. Além de uma visão geral dos aspectos fundamentais de cada assunto, são dadas referências para material detalhado para o completo entendimento destes.
 
 \section{Processamento de sinais}
-\subsection{Transformada rápida de Fourier}
+
+\subsection{Transformada de Fourier}
+A tranformada de Fourier é a generalização das séries de Fourier, onde, a idéia é aproximar uma função $f$ em um determinado intervalo por um soma de $cossenos$.
+
+A definição formal é apresentada na equação ~\ref{eq:fourier}.
+
+\begin{equation}
+\label{eq:fourier}
+F(k) = \int^{\infty}_{-\infty} f(x) e ^ {-2 \pi i k x} \,dx
+\end{equation}
+
+Assim, no contexto deste trabalho, em um sinal dado por $f(x)$, para cada frequência $k$, $F(k)$ denota a intensidade da frequência $k$ do sinal $f(x)$.
+
+Maiores referências sobre o assunto podem ser encontradas em ~\cite{BracewellRonaldFourier}.
+
+Esta definição formal não é adequada para utilização computacional, já que seu tratamento simbólico é difícil, assim técnicas que adequam esta equação à utilização computacional foram desenvolvidas, e uma de grande importância no contexto abordado, é a FFT - Fast Fourier Transform (Transformada Rápida de Fourier). Este algoritmo permite calcular a transformada discreta de um sinal de forma eficiente. A definição formal da transformada discreta é dada pela equação ~\ref{eq:fft}.
+
+\begin{equation}
+\label{eq:fft}
+F_n \equiv \sum_{k=0}^{N-1}{f_k e ^ {2 \pi i n \frac{k}{N}}}
+\end{equation}
+
+Maiores referências podem ser encontradas em ~\cite{BrighamFFT}.
+
+No contexto da análise de sinal a FFT será usada para o cálculo do espectro de intensidade de um sinal, que consiste em calcular a FFT do sinal para janelas de tempo definidas, calculando a intensidade do sinal para cada intervalo e frequencia, gerando assim uma superfície que contém a informação de intensidade para todas as frequências do sinal, em cada instante de tempo. A teoria sobre espectros de intesidade pode ser encontrada em ~\cite{OppenheimSchaferBuckSignalProcessing}.
 
 \section{Método dos mínimos quadrados}
 
