@@ -1,1 +1,19 @@
 \chapter{Melhorias e Trabalhos futuros}
+
+Desde o início a proposta do trabalho era desenvolver uma técnica de comparação de conteúdos de áudio utilizando uma tecnologia adaptativa, associado a um protótipo funcional que fosse capaz de exercitar e avaliar a técnica de comparação desenvolvida, assim, diversos pontos do trabalho foram abordados apenas superficialmente, e são passíveis de grandes melhorias. A seguir serão apresentados alguns dos pontos de extensão mais importantes.
+
+\paragraph*{Automatização da identificação de notas.} O processo executado no trabalho foi manual, e é passível de automatização, para tanto, a análise das variações de intensidade e variações de frequência ao longo da linha de tempo podem ser extremamente úteis. Pode-se utilizar como base trabalhos já desenvolvidos, a fim de melhorar esta fase do protótipo.
+
+\paragraph*{Maior granularidade de erros.} Foram considerados apena três tipos de erros para este trabalho (\emph{OMISSÃO}, \emph{ADIÇÃO} e \emph{TROCA} de uma nota), ao longo do desenvolvimento percebeu-se que estas classes de erro apenas não são capazes de contabilizar com precisão o desvio que o usuário tenha cometido, assim propõem-se a criação de uma nova classe de erro, denominada \emph{VARIAÇÃO MENOR}, que seria similar à uma \emph{TROCA}, porém representaria uma troca pequena, dentro de uma tolerância pré-determinada. Esta nova classe tem o objetivo de descrever um erro muito comum, onde o usuário não troca uma nota por completo, mas sim desvia um pouco da nota original, por exemplo, ao subir um tom apenas.
+
+\paragraph*{Múltiplos erros.} O autômato desenvolvido é capaz de lidar com erros simples apenas (dentro da definição proposta), porém é extremamente comum, em especial para o caso de \emph{TROCA}, que o usuário cometa mais de erro seguido. O projeto atual do autômato não é capaz de lidar e aceitar múltiplos erros, gerando \emph{scores} mais baixos do que o esperado para trocas seguidas.
+
+\paragraph*{Definição dos pesos de cada classe de erro.} Para a geração do grau de similaridade, diversos fatores devem ser levados em consideração, como:
+
+\begin{itemize}
+\item Número de erros
+\item Tipos de erros cometidos
+\item Aceitação ou não da cadeia (atingir o fim do autômato)
+\end{itemize}
+
+Tais fatores influenciam diferentemente na similaridade entre dois conteúdos, por exemplo, a omissão de uma nota é intuitivamente um erro mais grave do que uma pequena troca de uma nota. Porém, essas diferenças de erros não são contabilizadas, sendo tratadas da mesma forma. Testes com repositórios maiores e associados a um \emph{feedaback} humano poderia prover dados que ajudassem a calibração dos pesos de cada fator no \emph{score} final.
