@@ -2,22 +2,66 @@
 
 Este capítulo irá apresentar os experimentos e testes realizados sobre os componentes construídos, seus procedimentos, objetivos e resultados obtidos.
 
+\section{Rotinas para manipulação de melodias e arquivos MIDI}
+
+Para poder testar e realizar experimentos com os diversos componentes que fazem tratamento, comparação ou busca de melodias de notas, preparou-se um conjunto de rotinas capazes de manipular melodias de notas. Sempre utilizando a representação de notas discutidas na seção~\ref{sec:notas}. São elas:
+\begin{enumerate}
+\item Importação de melodias a partir de trilhas de arquivos MIDI
+
+Rotina capaz de ler arquivos no formado Standard MIDI File, e extrair a cadeia de notas de uma das trilhas deste.
+
+\item Exportação de melodias para arquivos MIDI
+
+Rotina que possibilita a exportação de uma cadeia de notas do formato interno para um arquivo MIDI.
+
+\item Cálculo da taxa de polifonia de uma trilha MIDI
+
+Esta taxa significa a razão entre a soma dos intervalos em que mais de uma nota está ressonando pela soma dos intervalo em que há pelo menos um nota ressonando. Uma baixa taxa de polifonia é um indício de que a trilha é melódica.
+
+\item Extração de subcadeia de uma cadeia
+
+Rotina simples que isola um trecho de uma cadeia, para viabilizar a realização de experimentos.
+
+\item Geração de perturbações
+
+Esta rotina introduz perturbações parametrizáveis nas alturas e durações da cadeia. Os parâmetros são:
+\begin{description}
+  \item[Variação fixa de altura] Um valor em semitons que será adicionado às alturas da cadeia (transposição tonal fixa).
+  \item[Variação aleatória de altura] O valor do desvio-padrão em semitons de uma variação aleatória de altura a ser introduzida em cada nota.
+  \item[Dilatação/contração fixa de durações] Um fator que multiplicará todas as durações da cadeia.
+  \item[Variação aleatória de durações] O valor do desvio-padrão de uma variação aleatória de duração a ser introduzida em cada nota.
+\end{description}
+
+\item Geração de falhas
+
+Rotina que introduz falhas do tipo retirada ou adição de nota, ao longo da cadeia, de forma aleatória.
+
+\end{enumerate}
+
+
+
+\section{Repertório musical e construção do repositório}
+
+Com o fim de testar e avaliar os componentes do protótipo construído, preparou-se um repertório musical com vinte músicas populares. Conforme descrito anteriormente a construção do repositório de dados é fortemente baseada em arquivos MIDI, pois estes contém as melodias das músicas em um formato de fácil tratamento. Por isso, a escolha deste repertório embasou-se na disponibilidade das músicas neste formato.
+
+A partir dos arquivos MIDI destas músicas foram extraídas as trilhas com mais probabilidade de serem melódicas, utilizando a rotina de cálculo da taxa de polifonia descrita acima. Manualmente, selecionou-se as trilhas que de fato continham as melodias características das músicas. Em geral, para músicas populares estas trilhas representam a linha do cantor ou de algum instrumento monofônico, como um saxofone.
+
+Uma rotina de inicialização do repositório foi então preparada. Esta extraí as melodias das trilhas selecionadas de cada arquivo MIDI, e carrega uma estrutura de dados em memória relacionando estas melodias aos metadados das músicas (i.e. título e nome do compositor).
+
+
 \section{Processo de extração de notas}
+\label{sec:resultados-extracao}
 
 O mecanismo implementado para extração de notas foi submetido a diversos testes. O procedimento adotado para estes é o seguinte:
 
 \begin{enumerate}
 \item Gravação de amostras de áudio
 
-Uma pessoa assobiou 19 trechos de 3 a 8 segundos de duração de músicas pertencentes a um repositório de 17 músicas. Para captura do áudio utilizou-se um microfone comum de PC e um software simples de gravação. Deste processo resulta-se um arquivo no formato WAVE\footnote{Mais referências sobre este formato em: http://ccrma.stanford.edu/CCRMA/Courses/422/projects/WaveFormat/}.
+Foram escolhidos dezenove trechos característicos das músicas do repertório, de três a oito segundos de duração. Estes trechos foram assobiados por um executor. Para captura do áudio utilizou-se um microfone comum de PC e um software simples de gravação. Estas amostras foram armazenadas em arquivos no formato WAVE\footnote{Mais detalhes sobre este formato em: http://ccrma.stanford.edu/CCRMA/Courses/422/projects/WaveFormat/}.
 
-\item Processamento da amostra
+\item Extração de notas
 
-O arquivo WAV é processado com uma rotina desenvolvida em MatLab. O resultado deste processamento é um gráfico a partir do qual é possível visualizar e extrair manualmente as notas. Esta extração manual, é transcrita em um arquivo textual de uma maneira tabular.
-
-\item Reprodução gráfica e audível
-
-A representação tabular contida no arquivo texto é transformada para uma representação na forma de lista de eventos musicais. A partir desta lista, gera-se um arquivo MIDI contendo a reprodução daquela melodia num piano.
+O arquivo WAV é utilizado como entrada para o procedimento de extração de notas descrito no item~\ref{sec:extracao}.
 
 \item Avaliação
 
@@ -50,41 +94,9 @@ Música não identificada & 3  \\[1ex]
 A partir destes resultados conclui-se que a qualidade do procedimento de extração está aceitável.
 
 
-\section{Rotinas para manipulação de cadeias}
-
-Para poder testar e realizar experimentos com os diversos componentes que fazem tratamento, comparação ou busca de cadeias de notas, preparou-se um conjunto de rotinas capazes de manipular cadeias de notas. Sempre utilizando a representação de notas discutidas na seção~\ref{sec:notas}. São elas:
-\begin{enumerate}
-\item Importação de cadeias a partir de trilhas de arquivos MIDI
-
-Rotina capaz de ler arquivos no formado Standard MIDI File, e extrair a cadeia de notas de uma das trilhas deste.
-
-\item Exportação de cadeias para arquivos MIDI
-
-Rotina que possibilita a exportação de uma cadeia de notas do formato interno para um arquivo MIDI.
-
-\item Extração de subcadeia de uma cadeia
-
-Rotina simples que isola um trecho de uma cadeia, para viabilizar a realização de experimentos.
-
-\item Geração de perturbações
-
-Esta rotina introduz perturbações parametrizáveis nas alturas e durações da cadeia. Os parâmetros são:
-\begin{description}
-  \item[Variação fixa de altura] Um valor em semitons que será adicionado às alturas da cadeia (transposição tonal fixa).
-  \item[Variação aleatória de altura] O valor do desvio-padrão em semitons de uma variação aleatória de altura a ser introduzida em cada nota.
-  \item[Dilatação/contração fixa de durações] Um fator que multiplicará todas as durações da cadeia.
-  \item[Variação aleatória de durações] O valor do desvio-padrão de uma variação aleatória de duração a ser introduzida em cada nota.
-\end{description}
-
-\item Geração de falhas
-
-Rotina que introduz falhas do tipo retirada ou adição de nota, ao longo da cadeia, de forma aleatória.
-
-\end{enumerate}
-
 
 \section{Comparação numérica}
-A comparação numérica foi testada utilizando principalmente a rotina que gera perturbações nas cadeias. A partir de uma dada cadeia de notas de referência, gerou-se um conjunto de variações com a introdução de perturbações de intensidade variável. Executou-se o algoritmo de comparação numérica tanto para alturas como para durações, e calculou-se a média dos valores de distância obtidos.
+A comparação numérica foi testada utilizando principalmente a rotina que gera perturbações nas melodias. A partir de uma dada cadeia de notas de referência, gerou-se um conjunto de variações com a introdução de perturbações de intensidade variável. Executou-se o algoritmo de comparação numérica tanto para alturas como para durações, e calculou-se a média dos valores de distância obtidos.
 
 O gráfico da figura~\ref{fig:chart1} nos mostra uma comparação de durações nota a nota graficamente. Neste gráfico é ilustrada uma comparação entre uma cadeia do acervo e uma cadeia de entrada extraída de uma melodia assobiada. O emparelhamento necessário para este método, torna possível a plotagem da distribuição de notas em um plano como o ilustrado. No eixo das abscissas, tem-se a alturas da cadeia do acervo e no eixo das ordenadas as alturas da cadeia de entrada. O algoritmo é análogo ao processo de encontrar a reta neste plano que minimiza um certo critério de erro. Uma vez encontrada esta reta, a idéia de distância está associada à distância total dos pontos a esta reta de aproximação.
 
@@ -123,13 +135,13 @@ Nenhum & 4 \\ [1ex]       % [1ex] adds vertical space
 
 \section{Comparação com autômato adaptativo}
 
-Para testar a capacidade de reconhecimento inexato do autômato adaptativo, escolheu-se uma cadeia de referência e a partir dela foram geradas dez mil cadeias com perturbações de altura. Aplicou-se, então, o autômato sobre este conjunto e obteve-se um percentual médio de aceitação, ou seja, uma representação da efetividade do autômato. Repetiu-se este procedimento para diversos valores do parâmetro de variação aleatória de altura, e com os resultados obtidos, compilou-se a tabela ~\ref{table:efetiv}.
+Para testar a capacidade de reconhecimento inexato do autômato adaptativo, escolheu-se uma cadeia de referência e a partir dela foram geradas dez mil melodias com perturbações de altura. Aplicou-se, então, o autômato sobre este conjunto e obteve-se um percentual médio de aceitação, ou seja, uma representação da efetividade do autômato. Repetiu-se este procedimento para diversos valores do parâmetro de variação aleatória de altura, e com os resultados obtidos, compilou-se a tabela ~\ref{table:efetiv}.
 
 \begin{table}[ht] \caption{Efetividade do autômato com perturbações}
 \centering
 \begin{tabular}{c c}
 \hline\hline
-Perturbação & Efetividade \\ [0.5ex]
+Perturbação & Efetividade (\%) \\ [0.5ex]
 \hline
 0,00 & 100,0 \\
 0,05 & 100,0 \\
@@ -159,6 +171,144 @@ Perturbação & Efetividade \\ [0.5ex]
 
 
 
-\section{Busca}
+\section{Comparação de melodias e busca}
 
-% TODO
+Os componentes relacionados a comparação de melodias e busca foram testados utilizando as mesmas amostras de áudio preparadas para o item~\ref{sec:resultados-extracao}. As representações tabulares de notas produzidas para cada amostra durante os testes do processo de extração foram armazenadas em arquivos de texto.
+
+Preparou-se então uma rotina de testes que inicializa o repositório, lê cada um dos arquivos de texto, constrói a melodia a partir da tabela e chama a rotina de busca, que por sua vez realiza a busca no repositório.
+
+A saída da rotina de busca mostra uma lista contendo a melhor correspondência encontrada para cada música do repositório, ordenada pela semelhança (calculada segundo os critérios do item~\ref{sec:semelhanca}). São mostrados também a posição na melodia da música onde ocorreu a correspondência (\emph{start}), a contagem de erros (\emph{err}), a lista de códigos de resultado e a distância numérica das durações das notas das melodias (\emph{distance}).
+
+A listagem a seguir é um exemplo de saída da rotina de busca, recebendo a melodia extraída de um assobio da música \emph{Yesterday} (\emph{The Beatles}).
+
+\makebox[\textwidth]{\hrulefill}
+\begin{verbatim}
+Yesterday
+start = 22
+err = 0
+[OK, OK, OK, OK, OK, OK, OK]
+distance = 0.012336956889409096
+
+Chega De Saudade
+start = 162
+err = 1
+[OK, OK, EXCHANGE, OK, OK, OK, OK]
+distance = 0.6443477972823642
+
+Palco
+start = 86
+err = 2
+[OK, OK, OK, EXCHANGE, OK, OK, EXCHANGE]
+distance = 4.645081298991189
+
+Ode To Joy
+start = 118
+err = 2
+[OK, OMISSION, OK, OK, EXCHANGE, OK, OK, OK]
+distance = 0.17238503370165567
+
+Aquarela
+start = 311
+err = 2
+[OK, EXCHANGE, OK, ADDITION, OK, OK]
+distance = 0.058781102023442666
+
+Money For Nothing
+start = 221
+err = 2
+[OK, OK, OK, ADDITION, OK, EXCHANGE]
+distance = 77.8322420290857
+
+Hino Nacional Brasileiro
+start = 12
+err = 3
+[OK, EXCHANGE, OK, ADDITION, OK, EXCHANGE]
+distance = 0.015761535349990998
+
+MATCH!
+We Are The Champions
+start = 9
+err = 3
+[OK, EXCHANGE, OK, OK, EXCHANGE, OK, EXCHANGE]
+distance = 0.6035584560535664
+
+País Tropical
+start = 50
+err = 3
+[OK, EXCHANGE, OK, ADDITION, OK, EXCHANGE]
+distance = 0.017968624035241167
+
+Tico Tico No Fubá
+start = 171
+err = 3
+[OK, EXCHANGE, OK, OK, EXCHANGE, OK, EXCHANGE]
+distance = 0.07319050735183884
+
+Você É Linda
+start = 68
+err = 4
+[OK, OMISSION, OK, OK, OMISSION, OK, OMISSION, OK, EXCHANGE, OK]
+distance = 0.07423018991836677
+
+Penny Lane
+start = 76
+err = 103
+[OK, EXCHANGE, OK, OK, OK, EXCHANGE]
+distance = 0.8258801744258808
+
+Hino Do Corinthians
+start = 13
+err = 104
+[OK, OK, OK]
+distance = 0.015410959363391956
+
+Marvin
+start = 57
+err = 104
+[OK, EXCHANGE, OK, EXCHANGE, OK, EXCHANGE]
+distance = 0.02733707742962276
+
+With Or Without You
+start = 93
+err = 104
+[OK, EXCHANGE, OK, EXCHANGE, OK, EXCHANGE]
+distance = 0.056293950647727874
+
+Wave
+start = 24
+err = 104
+[OK, EXCHANGE, OK, EXCHANGE, OK, EXCHANGE]
+distance = 0.0033705159595315967
+
+Hey Jude
+start = 221
+err = 104
+[OK, EXCHANGE, OK, OMISSION, OK, OK, EXCHANGE]
+distance = 1.0200702551195635
+
+Tarde Em Itapoã
+start = 3
+err = 104
+[OK, OMISSION, OK, OK, OK]
+distance = 0.06725528759264139
+
+Sunday Bloody Sunday
+start = 193
+err = 104
+[OK, EXCHANGE, OK, EXCHANGE, OK, EXCHANGE]
+distance = 0.19622750059124283
+
+Happy Birthday To You
+start = 0
+err = 105
+[OK, EXCHANGE, OK]
+distance = 0.015410959363391956
+\end{verbatim}
+\makebox[\textwidth]{\hrulefill}
+
+Analisando todas as listagens deste teste, pode-se levantar uma tabela ilustrando a taxa de acerto da busca. Para cada caso, observou-se em que posição da listagem aparece a música na qual foi baseado o assobio. A figura~\ref{fig:acerto} mostra a quantidade de casos em que a busca classificou a música correta em primeiro lugar, em segundo lugar e assim por diante.
+
+\begin{figure}[htb]
+	\center{\includegraphics{figuras/acerto.eps}}
+	\caption{\label{fig:acerto} Análise de acerto da busca}
+\end{figure}
