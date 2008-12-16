@@ -9,13 +9,13 @@ Propõe-se o desenvolvimento de um módulo de busca por músicas baseado em conteúd
 
 \subsection{Descrição}
 
-A idéia geral de um sistema de busca está implícita na maioria das pessoas que se utilizam de serviços como os de busca por documentos, nestes serviços, em geral o usuário entra com um trecho do documento que ele procura, e o sistema de busca encontra documentos que mais se aproximem do trecho que o usuário proveu. Analogamente, em um sistema de busca por áudio baseado em consteúdo, o usuário provê um trecho do áudio que deseja encontrar, e o sistema encontra os áudios mais similares.
+A idéia geral de um sistema de busca está implícita na maioria das pessoas que se utilizam de serviços como os de busca por documentos, nestes serviços, em geral o usuário entra com um trecho do documento que ele procura, e o sistema de busca encontra documentos que mais se aproximem do trecho que o usuário proveu. Analogamente, em um sistema de busca por áudio baseado em conteúdo, o usuário provê um trecho do áudio que deseja encontrar, e o sistema encontra os áudios mais similares.
 
 \subsection{Uso do sistema}
 
 Propõe-se o desenvolvimento de um protótipo de um sistema de buscas por músicas baseado em conteúdo, que receba uma entrada do usuário que corresponde à sua \query, ou seja, algum trecho da música buscada que o usuário reproduza através de um assobio, e em seguida compara com as músicas presentes em seu repositório, calculando a similaridade entre cada música e a \query, a partir das comparações efetuadas, o sistema é capaz de apresentar quais as entradas mais prováveis de corresponderem à música procurada.
 
-Em linhas gerais, a idéia de uso do sistema pode ser vista na Figura ~\ref{fig:usecase}.
+Em linhas gerais, a idéia de uso do sistema pode ser vista na figura ~\ref{fig:usecase}.
 
 \begin{figure}[htb]
 	\center{\includegraphics[width=0.7\textwidth]{figuras/usecase.eps}}
@@ -31,16 +31,16 @@ Em linhas gerais, a idéia de uso do sistema pode ser vista na Figura ~\ref{fig:u
 
 \subsection{Requisitos funcionais e Premissas}
 
-Apesar da idéia ser simples, sua complexidade é grande, assim deve-se explicitar alguns requisitos que definirão o sistema, além de premissas que serão assumidas durante o desenvolvimento.
+Apesar da simplicidade da idéia geral, existe uma complexidade considerável nos detalhes. Assim deve-se explicitar alguns requisitos que definirão o sistema, além de premissas que serão assumidas durante o desenvolvimento.
 
 \subsubsection{Entrada de dados}
-o usuário deve fornecer como entrada ao sistema um assobio de um trecho de uma música que deseja buscar, originando a \query \ que será processada. As informações fornecidas pelo usuário, em geral, são muito limitadas e com grandes variações com relação ao conteúdo original, além disso tipicamente o trecho é curto e erros são frequentes. Para fins de processamento da \query \ a origem da mesma é irrelevante, assim, outras formas de entrada que gerassem notas musicais diretamente, como um piano por exemplo, seriam passíveis de utilização. No caso do assobio fornecido pelo usuário, o mesmo deve estar codificado em um formato WAV.
+O usuário deve fornecer como entrada ao sistema um assobio de um trecho de uma música que deseja buscar, originando a \query \ que será processada. As informações fornecidas pelo usuário, em geral, são muito limitadas e com grandes variações com relação ao conteúdo original, além disso tipicamente o trecho é curto e erros são freqüentes. Para fins de processamento da \query \, a sua origem é irrelevante. Assim, outras formas de entrada que produzissem notas musicais diretamente, como um teclado MIDI por exemplo, seriam passíveis de utilização. No caso do assobio fornecido pelo usuário, o mesmo deve estar codificado no formato WAV.
 
 \subsubsection{Tipo de busca}
-O sistema restringe-se a procurar por melodias, ou no caso mais geral, sequências de notas musicais, não sendo adequado portanto para encontrar trechos cantados, por exemplo. Outras formas de busca, devem ser abordadas com diferentes técnicas.
+O sistema restringe-se a procurar por melodias, ou no caso mais geral, seqüências de notas musicais, não sendo adequado portanto para encontrar trechos cantados, por exemplo. Outras formas de busca devem ser abordadas com diferentes técnicas.
 
 \subsubsection{Espaço de busca}
-O espaço de busca é constituído por músicas em formato MIDI, devidamente preparadas para o ambiente de execução de buscas. Pelo fato dos arquivos MIDI, na maioria dos casos, possuirem diversas trilhas, devem portanto passar por um processo de preparação, onde apenas a trilha mais relevante para a melodia da música é extraída e então adicionada ao repositório.
+O espaço de busca é constituído por músicas em formato MIDI, devidamente preparadas para o ambiente de execução de buscas. Na maioria dos casos, os arquivos MIDI possuírem diversas trilhas. Por este motivo, precisam passar por um processo de preparação em que apenas as trilhas melódicas mais relevantes da música são extraídas e adicionadas ao repositório.
 
 \subsubsection{Resposta do sistema}
 A resposta do sistema deve conter a lista de músicas do repositório mais similares à entrada do usuário. Para ordenação das músicas um critério de similaridade será definido, ao qual o número de notas em comum (entre uma música e a \query \ fornecida) deverá exercer grande influência.
@@ -48,28 +48,28 @@ A resposta do sistema deve conter a lista de músicas do repositório mais similar
 
 \subsection{Arquitetura do Sistema}
 
-Nesta seção serão apresentadas alguns diagramas a fim de descrever o sistema de uma forma mais específica, mostrando o seu fluxo de informação, seus componentes, e suas interações.
+Nesta seção serão apresentados diagramas de descrição específica do sistema, mostrando o seu fluxo de informação, seus componentes e suas interações.
 
-A arquitetura proposta para o protótipo é dividida em componentes, onde cada componente procura implantar uma função bem determinada, de modo que seja facilmente trocável, isso dá abertura para uma evolução contínua do protótipo.
+A arquitetura proposta para o protótipo é dividida em componentes. Cada um destes tem seu papel funcional bem determinado no conjunto, de modo que as implementações podem ser facilmente substituídas. Esta característica possibilitou uma evolução contínua do protótipo.
 
-\subsubsection{Fluxo de informação do sistema} O usuário deverá fornecer a entrada ao sistema, que por sua vez, digitalizará e converterá o sinal para um modelo musical que representará o trecho fornecido, ou seja, a \query. Em seguida, esta será apresentada ao módulo de busca do sistema, que analisará a mesma comparando-a com as músicas existentes no repositório. Um dos pilares da comparação é a adaptatividade, que ajusta o comparador principal. Ao fim da comparação com as entradas do repositório, é possível estabelecer o conjunto de músicas mais prováveis de atender à \query \ do usuário. Este fluxo pode ser acompanhado na Figura ~\ref{fig:fluxo}.
+\subsubsection{Fluxo de informação do sistema} O usuário deverá fornecer a entrada ao sistema, que por sua vez, digitalizará e converterá o sinal para um modelo musical que representará o trecho fornecido, ou seja, a \query. Em seguida, esta será apresentada ao módulo de busca do sistema, que analisará a mesma comparando-a com as músicas existentes no repositório. Um dos pilares da comparação é a adaptatividade, que ajusta o comparador principal. Ao fim da comparação com as entradas do repositório, é possível estabelecer o conjunto de músicas mais prováveis de atender à \query \ do usuário. Este fluxo pode ser acompanhado na figura ~\ref{fig:fluxo}.
 
 \begin{figure}[htb]
 	\center{\includegraphics[width=0.9\textwidth]{figuras/fluxo.eps}}
 	\caption{\label{fig:fluxo} Fluxo de informação do sistema}
 \end{figure}
 
-\subsubsection{Diagrama de componentes} O diagrama de componentes da Figura ~\ref{fig:componentes} mostra como as diversas partes do sistema interagem. Este diagrama é especialmente importante pois ele servirá para isolar partes do sistema, permitindo assim que os componentes evoluam separadamente, podendo-se trocar implementações ou métodos utilizados sem afetar o funcionamento geral do sistema.
+\subsubsection{Diagrama de componentes} O diagrama de componentes da figura ~\ref{fig:componentes} mostra como as diversas partes do sistema interagem. Este diagrama é especialmente importante por delimitar as fronteiras entre as partes do sistema, permitindo assim que os componentes evoluam separadamente, podendo-se trocar implementações ou métodos utilizados sem afetar o funcionamento geral do sistema.
 
 \begin{enumerate}
 
 \item \emph{Aquisição do sinal}: É responsável por gravar o áudio produzido pelo usuário, e armazená-lo para que o conversor em seguida possa analisá-lo. Um arquivo WAV é usado para guardar o áudio, já que este tipo de formato apresenta perdas desprezíveis para o processo.
 
-\item \emph{Conversor}: Receberá um sinal de áudio digitalizado, do componente anterior, e extrairá do sinal as notas cantadas pelo usuário, que, juntamente com suas durações, darão origem ao modelo musical que representa o áudio que o usuário gerou.
+\item \emph{Conversor}: A partir do sinal de áudio digitalizado, indentifica e extrái as informações musicais. Ou seja, produz um modelo musical contendo informações de alturas e tempos das notas identificadas na amostra.
 
 \item \emph{Comparador}: Recebe dois modelos musicais e os compara utilizando um autômato adaptativo, gerando uma medida de similaridade entre os modelos recebidos.
 
-\item \emph{Repositório}: Armazena as musicas que servem de base para a busca (em formato MIDI), e permite serviços de gerenciamento do repositório.
+\item \emph{Repositório}: Armazena as músicas que servem de base para a busca (em formato MIDI), e permite serviços de gerenciamento do repositório.
 
 \item \emph{Ranking}: Ordena uma lista de músicas de acordo com critérios previamente definidos, baseando-se na similaridade e nas informações geradas a partir da comparação.
 
@@ -84,13 +84,13 @@ A arquitetura proposta para o protótipo é dividida em componentes, onde cada com
 
 \subsection{Escopo}
 
-O sistema proposto é amplo e permeia diversas áreas do conhecimento, assim uma limitação do escopo é fundamental. O foco do trabalho é a utilização de técnicas adaptativas no reconhecimento de padrões musicais, assim o componente de maior importância é naturalmente o \emph{comparador} que é o componente que se utilizará de tais técnicas. Esta é uma aplicação inovadora, e tem o potencial de gerar bons resultados, justificando a concentração dos esforços.
+O sistema proposto é bastante amplo e permeia diversas áreas do conhecimento. Devido a esta abrangência, uma limitação do escopo é fundamental. O foco do trabalho é a utilização de técnicas adaptativas no reconhecimento de padrões musicais, assim o componente de maior importância é naturalmente o \emph{comparador} que é o componente que se utilizará de tais técnicas. Esta é uma aplicação inovadora, e tem o potencial de gerar bons resultados, justificando a concentração dos esforços.
 
 Porém, a validação do \emph{comparador} e a avaliação de seu desempenho depende fundamentalmente dos dados gerados pelos outros componentes. Assim, a idéia foi criar implementações simples, que fossem capazes de prover uma infra-estrutura de teste para o \emph{comparador}, porém tal método não foi aplicável a todos os componentes, como foi o caso do \emph{conversor}, exigindo um certo refino de sua implementação. Assim foi dada uma atenção secundária ao \emph{conversor}, com o fim de poder prover dados reais de teste para o \emph{comparador}. Os outros componentes tiveram implementações simples, porém suficientemente boas para prover uma prova de conceito adequada.
 
 \section{Extração de notas}
 
-A idéia utilizada para extração de notas constitui da quebra o sinal de áudio em diversas janelas de tempo pequenas, extraindo-se em seguida a tranformada de Fourier destas janelas, encontrando-se assim a distribuição de frequências para cada intervalo. A análise destas distribuições permite encontrar os picos de frequência, e a partir destes picos pode-se encontrar as notas entoadas pelo usuário.
+A idéia utilizada para extração de notas constitui da quebra o sinal de áudio em diversas janelas de tempo pequenas, extraindo-se em seguida a transformada de Fourier destas janelas, encontrando-se assim a distribuição de freqüências para cada intervalo. A análise destas distribuições permite encontrar os picos de freqüência, e a partir destes picos pode-se encontrar as notas entoadas pelo usuário.
 
 Assim, neste sistema o processo de extração de notas envolve dois componentes distintos: o componente de \emph{aquisição de sinal} e o \emph{conversor}, sendo constituído das seguintes fases:
 
@@ -98,23 +98,23 @@ Assim, neste sistema o processo de extração de notas envolve dois componentes di
 \item Aquisição do sinal
 \item Extração do espectrograma
 \item Filtro de intensidade
-\item Extração de picos de frequência
+\item Extração de picos de freqüência
 \item Identificação das notas
 \item Geração do modelo musical
 \item Sintetização de áudio
 \end{itemize}
 
-Estas fases são executadas em sequência, até gerar a principal saída: o modelo musical, que proverá a entrada para o sistema de busca, enquanto o áudio sintetizado posteriormente tem o objetivo de prover um feedback do processo de extração de notas, permitindo avaliar a qualidade do sistema. A seguir cada uma destas fases serão detalhadas, mostrando as técnicas utilizadas em cada uma destas.
+Estas fases são executadas em seqüência, até gerar a principal saída: o modelo musical, que proverá a entrada para o sistema de busca, enquanto o áudio sintetizado posteriormente tem o objetivo de prover um feedback do processo de extração de notas, permitindo avaliar a qualidade do sistema. A seguir cada uma destas fases serão detalhadas, mostrando as técnicas utilizadas em cada uma destas.
 
-A técnica descrita faz parte de uma classe de métodos baseados em análise de frequência, diversas abordagens similares foram desenvolvidas ao longo dos anos, em trabalhos como ~\cite{MartinPiszczalski} e ~\cite{PiszczalskiGaller}.
+A técnica descrita faz parte de uma classe de métodos baseados em análise de freqüência, diversas abordagens similares foram desenvolvidas ao longo dos anos, em trabalhos como~\cite{MartinPiszczalski} e~\cite{PiszczalskiGaller}.
 
 \subsection{Aquisição do sinal}
-O primeiro passo para permitir o reconhecimento é a aquisição do sinal de áudio (assobio) gerado pelo usuário. Isso pode ser facilmente obtido através de um dispositivo de gravação, como um microfone, e um software de captura de áudio. O resultado dessa etapa é armazenada em um arquivo WAV, que reproduz o assobio de forma integral.
+O primeiro passo para permitir o reconhecimento é a aquisição do sinal de áudio (assobio) gerado pelo usuário. Isso pode ser facilmente obtido através de um dispositivo de gravação, como um microfone, e um software de captura de áudio. O resultado dessa etapa é armazenado em um arquivo WAV, que reproduz o assobio de forma integral.
 
 \subsection{Extração do espectrograma}
-A partir deste arquivo de áudio se extrai seu espectrograma, que é a transformada de Fourier para cada janela de tempo do sinal. O sinal é particionado em intervalos de tempo regulares, e para cada intervalo a dsitribuição de frequências é calculada. O espectrograma é uma reprodução muito próxima do sinal original, porém, transportado para o domínio da frequência. A fase de cada componente de frequência não é relevante para a análise, porém sua intensidade é extremamente importante, assim, as intensidades de cada componente são calculadas, o resultado pode ser encarado como uma superfície 3D, tendo como eixo X o tempo, eixo Y a frequência e eixo Z a intensidade do sinal (em \emph{dB}).
+A partir deste arquivo de áudio se extrai seu espectrograma, que é a transformada de Fourier para cada janela de tempo do sinal. O sinal é particionado em intervalos de tempo regulares, e para cada intervalo a distribuição de freqüências é calculada. O espectrograma é uma reprodução muito próxima do sinal original, porém, transportado para o domínio da freqüência. A fase de cada componente de freqüência não é relevante para a análise, porém sua intensidade é extremamente importante, assim, as intensidades de cada componente são calculadas, o resultado pode ser encarado como uma superfície 3D, tendo como eixo X o tempo, eixo Y a freqüência e eixo Z a intensidade do sinal (em \emph{dB}).
 
-A Figura ~\ref{fig:wave} mostra o sinal de áudio original de um assobio contendo um trecho da 9.\textordfeminine \ Sinfonia de Beethoven, também conhecido como Ode à Alegria, e a Figura ~\ref{fig:espectrograma} mostra seu espectrograma. Já pelo espectrograma é possível perceber os limiares das notas reproduzidas.
+A figura ~\ref{fig:wave} mostra o sinal de áudio original de um assobio contendo um trecho da 9.\textordfeminine \ Sinfonia de Beethoven, também conhecido como Ode à Alegria, e a figura ~\ref{fig:espectrograma} mostra seu espectrograma. Já pelo espectrograma é possível perceber os limiares das notas reproduzidas.
 
 \begin{figure}[htb]
 	\center{\includegraphics[width=0.7\textwidth]{figuras/ode-to-joy1-wav.eps}}
@@ -127,15 +127,15 @@ A Figura ~\ref{fig:wave} mostra o sinal de áudio original de um assobio contendo
 \end{figure}
 
 \subsection{Filtro de intensidade}
-O espectrograma original possui uma distribuição de frequências contendo diversas componentes provenientes de ruído, ou de intensidade muito baixa, que são pouco relevantes para a identificação das notas reproduzidas pelo usuário, assim aplica-se um filtro de intensidade, eliminando as frequências de baixa intensidade, produzindo assim um espectro mais simples de ser trabalhado. O resultado da aplicação deste filtro pode ser visto na Figura ~\ref{fig:espectrograma-filtro}.
+O espectrograma original possui uma distribuição de frequências contendo diversas componentes provenientes de ruído, ou de intensidade muito baixa, que são pouco relevantes para a identificação das notas reproduzidas pelo usuário, assim aplica-se um filtro de intensidade, eliminando as frequências de baixa intensidade, produzindo assim um espectro mais simples de ser trabalhado. O resultado da aplicação deste filtro pode ser visto na figura~\ref{fig:espectrograma-filtro}.
 
 \begin{figure}[htb]
 	\center{\includegraphics[width=0.7\textwidth]{figuras/ode-to-joy1-spec-filter.eps}}
 	\caption{\label{fig:espectrograma-filtro} Espectrograma após aplicação do filtro de intensidade}
 \end{figure}
 
-\subsection{Extração de picos de frequência}
-Após a eliminação do ruído, o sinal é analisado, extraindo-se os picos de frequências, que em geral representam o contorno da melodia que o usuário tentou reproduzir. Este contorno de frequências servirá de base para a identificação das notas, o resultado pode ser visto na Figura ~\ref{fig:espectrograma-picos}.
+\subsection{Extração de picos de freqüência}
+Após a eliminação do ruído, o sinal é analisado, extraindo-se os picos de frequências, que em geral representam o contorno da melodia que o usuário tentou reproduzir. Este contorno de frequências servirá de base para a identificação das notas, o resultado pode ser visto na figura~\ref{fig:espectrograma-picos}.
 
 \begin{figure}[htb]
 	\center{\includegraphics[width=0.7\textwidth]{figuras/ode-to-joy1-peaks.eps}}
@@ -145,7 +145,7 @@ Após a eliminação do ruído, o sinal é analisado, extraindo-se os picos de frequê
 \subsection{Identificação das notas e Geração do modelo musical}
 A partir dos picos de frequências encontrados na etapa anterior, já é possível, visualmente, identificar aproximadamente as notas (início, fim e frequência). Assim, como o objetivo do trabalho consistia da criação de um prtótipo que teria o fim de testar e avaliar o desempenho do mecanismo de comparação adaptativo, percebe-se que não seria necessário avançar além deste ponto na extração de notas, já que com tais resultados seria possivel extrair dados de testes reais para o \emph{comparador}.
 
-Os dados extraídos dão origem ao modelo musical que servirá como uma representação do áudio original, este modelo pode ser visto como uma tabela, que possui a lista das notas geradas pelo usuário, um exemplo pode ser visto na Tabela ~\ref{table:ode-to-joy1}.
+Os dados extraídos dão origem ao modelo musical que servirá como uma representação do áudio original, este modelo pode ser visto como uma tabela, que possui a lista das notas geradas pelo usuário, um exemplo pode ser visto na tabela~\ref{table:ode-to-joy1}.
 
 \begin{table}[ht]
 \caption{Notas extraídas a partir do espectrograma}
@@ -178,11 +178,11 @@ A partir do modelo extraído do áudio é possível criar um arquivo MIDI contendo a
 
 \section{Representação de notas e melodias}
 \label{sec:notas}
-A seção anterior descreveu o processo de extração de notas. Conforme foi visto, este processo analisa uma amostra de áudio de duração típica de três a quinze segundos, e produz uma tabela contendo os seguintes dados sobre as notas extraídas: altura (freqüência fundamental de vibração ou \emph{pitch}) e tempos de início e fim. Vale observar que nesta tabela as notas aparecem ordenadas cronológicamente e que não há sobreposição temporal destas.
+A seção anterior descreveu o processo de extração de notas. Conforme foi visto, este processo analisa uma amostra de áudio de duração típica de três a quinze segundos, e produz uma tabela contendo os seguintes dados sobre as notas extraídas: altura (freqüência fundamental de vibração ou \emph{pitch}) e tempos de início e fim. Vale observar que nesta tabela as notas aparecem ordenadas cronologicamente e que não há sobreposição temporal destas.
 
 A representação tabular guarda todas as informações musicais da melodia extraída e, portanto, define o formato de entrada para consultas ao mecanismo de busca musical. Porém, internamente a este mecanismo, as melodias são representadas na forma de listas de eventos musicais. Neste modelo interno, um evento musical pode ser uma nota ou um silêncio\footnote{ou \emph{pausa}}, e guarda suas duas características fundamentais: altura e duração. A altura é mantida em \emph{Hertz} e a duração em segundos. Para simplificar a representação, adotou-se um valor zero para a altura dos silêncios. A adoção desta representação justifica-se por uma questão de conveniência, uma vez que os algoritmos do mecanismo de busca são fundamentalmente baseados em listas.
 
-Musicalmente os silêncios, ou pausas, são considerados elementos tão importantes quanto as própias notas. Porém analisando reproduções de uma mesma melodia por diferentes interpretes, nota-se uma maior simetria nos ataques\footnote{inícios} das notas do que em seus fins. Assim, o tempo de ressonância das notas, e a duração dos silêncios é muito variável. Ao contrário dos intervalos entre os ataques, que tende a se manter mais estável.
+Musicalmente os silêncios, ou pausas, são considerados elementos tão importantes quanto as próprias notas. Porém analisando reproduções de uma mesma melodia por diferentes interpretes, nota-se uma maior simetria nos ataques\footnote{inícios} das notas do que em seus fins. Assim, os tempos de ressonância das notas, e as durações dos silêncios são muito variáveis. Ao contrário dos intervalos entre os ataques, que tendem a se manter mais estáveis.
 
 Conclui-se, portanto, que os intervalos entre os ataques das notas é mais relevante do que as durações exatas das notas e silêncios para definição da característica psicoacústica de uma melodia. Por este motivo, para os fins deste trabalho, os silêncios foram eliminados das representações. Para manter a característica da distância temporal entre ataques de notas, a duração de cada silêncio foi incorporada à duração da nota imediatamente anterior.
 
@@ -234,7 +234,7 @@ Quanto menor forem os valores destas somas, mais próximas são as melodias compar
 d = \alpha S_d + \beta S_p
 \end{equation}
 
-\section{Busca inexata com automato adaptativo}
+\section{Busca inexata com autômato adaptativo}
 
 Com a definição de proximidade entre melodias apresentada acima, seria possível construir um mecanismo de busca de uma melodia sobre um repositório de músicas, utilizando uma janela deslizante do tamanho da melodia de entrada e varrendo sobre todas as melodias do repositório. Porém tal mecanismo só seria efetivo no caso restrito em que a melodia de entrada não possui imperfeições como a ausência ou adição de notas.
 
@@ -242,7 +242,7 @@ Conforme já discutido anteriormente, estas imperfeições ocorrem com certa freqüê
 
 No capítulo~\ref{chap:historico}, diversas abordagens dadas a este problema foram apresentadas. Porém, não se localizou na literatura nenhum estudo que cite o uso de técnicas adaptativas com este fim. Propõe-se, então, um novo método de reconhecimento de padrões musicais baseado em autômatos adaptativos.
 
-Neste método, constrói-se um autômato adaptativo \cite{Neto94} automaticamente, a partir da melodia de entrada (consultada), que funciona como um reconhecedor de melodias semelhantes a esta. Este autômato então, é utilizado para processar todo o repositório de melodias e elencar as melhores semelhanças.
+Neste método, constrói-se um autômato adaptativo \cite{Neto94} automaticamente, a partir da melodia de entrada (consultada), que funciona como um reconhecedor de melodias semelhantes a esta. Este autômato é então utilizado para processar todo o repositório de melodias e elencar as melhores semelhanças.
 
 Como já foi dito anteriormente, a utilização deste formalismo para a comparação de melodias vem da necessidade de reconhecer melodias contendo imprecisões, naturais da reprodução humana. Sendo assim, o autômato foi projetado para lidar com três tipos de situações de erro na melodia de entrada. São elas:
 
@@ -266,14 +266,14 @@ Para ser capaz de processar melodias (tanto a da consulta como as da base de dad
 
 Porém, os valores possíveis de altura das notas constituem um domínio contínuo e portanto precisam ser ajustados para um domínio discreto, que constituirá o alfabeto do autômato. Para este domínio discreto, escolheu-se utilizar o conjunto de alturas das notas de um piano. Este conjunto, conhecido musicalmente como \emph{temperamento igual de 12 tons}, é o sistema de afinação predominantemente utilizado na música ocidental moderna \cite{Burns99}.
 
-O MIDI\footnote{Musical Instrument Digital Interface} \cite{midi} é um padrão de facto que define um protocolo para comunicação entre instrumentos musicais eletrônicos e outros equipamentos de áudio. Entre os diversos outros detalhes do protocolo, o MIDI define um código para representação das notas do sistema de afinação ocidental (notas do piano). Este código é um número inteiro entre 0 e 127, que é capaz de representar muito além da capacidade audível da maioria dos seres humanos. A nota 0, por exemplo, é uma nota Dó cinco oitavas abaixo do Dó central e corresponde a uma freqüência de 8,176 Hz. Por conveniência, adotaremos este código de notas MIDI como alfabeto do autômato.
+O MIDI\footnote{Musical Instrument Digital Interface} \cite{midi} é um padrão \emph{de facto} que define um protocolo para comunicação entre instrumentos musicais eletrônicos e outros equipamentos de áudio. Entre os diversos outros detalhes do protocolo, o MIDI define um código para representação das notas do sistema de afinação ocidental (notas do piano). Este código é um número inteiro entre 0 e 127, que é capaz de representar muito além da capacidade audível da maioria dos seres humanos. A nota 0, por exemplo, é uma nota Dó cinco oitavas abaixo do Dó central e corresponde a uma freqüência de 8,176 Hz. Por conveniência, adotaremos este código de notas MIDI como alfabeto do autômato.
 
 A primeira etapa do ajuste de domínio é basicamente uma conversão de unidades. A conversão da altura em Hertz para o código MIDI é dada pela seguinte relação:
 $$ p = 69 + 12\times\log_2 { \left(\frac {f}{440\,\mbox{Hz}} \right) }. $$
 
 Após esta conversão é necessário realizar uma quantização a fim de obter valores inteiros, discretizando o domínio. Note, porém, que este processo não é tão simples quanto um arredondamento. Pois o que define a característica perceptiva de uma melodia é a relação entre as alturas das notas e não seus valores absolutos, haja visto que a transposição tonal não altera esta característica. Sendo assim, um simples arredondamento poderia ocasionar erros de quantização consideráveis.
 
-Outro aspecto a se considerar é que o executor da melodia, pode perder a referência absoluta de afinação durante sua reprodução. Ou seja, para uma melodia suficientemente grande, a referência de afinação para uma determinada nota vem das $k$ notas anteriores e não da melodia inteira.
+Outro aspecto a se considerar é que o executor da melodia pode perder a referência absoluta de afinação durante sua reprodução. Ou seja, para uma melodia suficientemente grande, a referência de afinação para uma determinada nota vem das $k$ notas anteriores e não da melodia inteira.
 
 Considerando este aspecto relativo da reprodução humana, uma pesquisa da Universidade de Waikato (Nova Zelândia) apresentou um simples e interessante método de quantizar estes valores a partir da referência de afinação da nota anterior.
 
@@ -284,7 +284,7 @@ Este método foi reproduzido e testado utilizando valores extraídos de gravações 
 	\caption{\label{fig:quant-rel} Alturas quantizadas pelo método relativo}
 \end{figure}
 
-Tendo em vista as limitação deste método de quantização relativo, foi desenvolvido um método de quantização absoluto que será descrito em detalhes na seção seguinte.
+Tendo em vista as limitações deste método de quantização relativo, foi desenvolvido um método de quantização absoluto que será descrito em detalhes na seção seguinte.
 
 \subsection{Quantização absoluta das alturas das notas}
 
@@ -312,15 +312,15 @@ Os pontos de descontinuidade ocorrem quando $c = \frac{1}{2} + \lfloor p_i + \fr
 Por termos restringido o intervalo para uma região contínua, o termo $\lfloor p_i + c + \frac{1}{2} \rfloor$ agora passa a ser constante. Para calculá-lo basta utilizar para $c$ um valor qualquer do intervalo, como por exemplo a média dos extremos:
 $$ \bar{c} = \frac{c_1+c_2}{2}$$
 
-Com isso a equação ~\ref{E:dE2} fica:
+Com isso, a equação ~\ref{E:dE2} fica:
 \begin{equation} \label{E:dE3}
 c = \frac { \sum_{i=1}^N (\lfloor p_i + \bar{c} + \frac{1}{2} \rfloor - p_i) } { N }
 \end{equation}
 
-Se o valor obtido para $c$ estiver no intervalo $\left]c_1,c_2\right[$ este será solução da equação ~\ref{E:dE} e, portanto, um novo canditado a mínimo de $E$.
-Aplica-se este procedimento para todos os trechos entre pontos de descontinuidade do intervalo $\left]0,1\right]$ e obtem-se desta forma todos os candidatos a mínimo de $E$. Basta verificar os valores de $E$ para cada candidato e escolher aquele que a minimiza.
+Se o valor obtido para $c$ estiver no intervalo $\left]c_1,c_2\right[$ este será solução da equação ~\ref{E:dE} e, portanto, um novo candidato a mínimo de $E$.
+Aplica-se este procedimento para todos os trechos entre pontos de descontinuidade do intervalo $\left]0,1\right]$ e se obtem desta forma todos os candidatos a mínimo de $E$. Basta verificar os valores de $E$ para cada candidato e escolher aquele que a minimiza.
 
-O gráfico da figura~\ref{fig:quant-cmp} mostra uma comparação dos resultados dos dois métodos de quantização utlizando a mesma melodia da figura~\ref{fig:quant-rel}.
+O gráfico da figura~\ref{fig:quant-cmp} mostra uma comparação dos resultados dos dois métodos de quantização utilizando a mesma melodia da figura~\ref{fig:quant-rel}.
 
 \begin{figure}[htb]
 	\center{\includegraphics{figuras/quant-cmp.eps}}
@@ -338,11 +338,11 @@ Para ilustrar o funcionamento do autômato, considere a seguinte seqüência de not
 	\caption{\label{fig:adapt1} Configuração inicial do autômato adaptativo}
 \end{figure}
 
-A execução do autômato sobre uma cadeia qualquer inicia-se com o cálculo de uma constante de transposição. Esta constante nada mais é do que a diferença entre a primeira nota da cadeia de entrada e a da cadeia que originou o autômato. Este valor é descontado dos símbolos de entrada a cada leitura, e serve fundamentalmente para desfazer uma possível transposição tonal.
+A execução do autômato sobre uma cadeia qualquer se inicia com o cálculo de uma constante de transposição. Esta constante nada mais é do que a diferença entre a primeira nota da cadeia de entrada e a da cadeia que originou o autômato. Este valor é descontado dos símbolos de entrada a cada leitura, e serve fundamentalmente para desfazer uma possível transposição tonal.
 
 O caminho definido pelos estados de $0$ a $N$, deste ponto adiante chamado de caminho de referência, ocorre quando a cadeia de entrada equivale exatamente à cadeia procurada, a menos da constante de transposição.
 
-Estando no caminho de referência, ao receber um símbolo para o qual não existe transição, ocorre uma ação adaptativa em que uma estrutura de novos estados e transições é incorporanda ao autômato a partir do estado corrente.
+Estando no caminho de referência, ao receber um símbolo para o qual não existe transição, ocorre uma ação adaptativa em que uma estrutura de novos estados e transições é incorporada ao autômato a partir do estado corrente.
 
 Suponha que o autômato da figura~\ref{fig:adapt1} recebeu na entrada as notas 69 e 71, atingindo o estado 2. Em seguida, o autômato recebeu o símbolo 74 e disparou a ação adaptativa. A figura~\ref{fig:adapt2} mostra a configuração deste autômato após esta ação.
 
@@ -375,13 +375,13 @@ Note que o caso de adição de uma nota só pôde ser contornado por que a nota rece
 
 É importante observar que este autômato é capaz de reconhecer melodias contendo múltiplos erros, desde que devidamente espaçados. A ocorrência de dois erros consecutivos implica na não aceitação da cadeia, pois não há ações adaptativas nos estados fora do caminho de referência. Tal possibilidade implicaria em um tratamento muito mais complexo das possibilidades de combinação de erros e transições de recuperação.
 
-Uma limitação importante deste tipo autômato é percebida em situações em que as transições de recuperação de erro são conflitantes. No exemplo apresentado, as transições de recuperação de erro são indepententes, por serem disparadas com símbolos diferentes. Porém, em alguns casos, quando as melodias possuem notas repetidas, transições de recuperação diferentes podem ser disparadas com um mesmo símbolo. Neste casos, para evitar o não-determinismo do autômato, elimina-se a transição de menor prioridade. Os casos de erro em ordem decrescente de prioridade são: adição, troca e omissão.
+Uma limitação importante deste tipo autômato é percebida em situações em que as transições de recuperação de erro são conflitantes. No exemplo apresentado, as transições de recuperação de erro são independentes, por serem disparadas com símbolos diferentes. Porém, em alguns casos, quando as melodias possuem notas repetidas, transições de recuperação diferentes podem ser disparadas com um mesmo símbolo. Nestes casos, para evitar o não-determinismo do autômato, elimina-se a transição de menor prioridade. Os casos de erro em ordem decrescente de prioridade são: adição, troca e omissão.
 
 Durante o reconhecimento de uma cadeia, o autômato registra um código de resultado para cada nota lida, em uma lista. Quando a nota recebida era esperada, o algoritmo registra \texttt{OK}. Quando a nota não era esperada o algoritmo registra o código da situação de erro ocorrida: \texttt{EXCHANGE}, \texttt{ADDITION} ou \texttt{OMISSION}. Note que neste caso o resultado depende da transição de recuperação que for utilizada e só pode ser determinado ao tratar a nota seguinte.
 
-Quando o autômato atinge o estado final, a cadeia é considerada aceita e a lista de código de resultado representa os detalhes do reconhecimento. Caso contrário, a cadeia é rejeitada, porém, para se saber até que ponto a cadeia foi reconhecida retorna-se a lista de código de resultado parcial. Esta lista contém os resultado até o momento em que a cadeia foi rejeitada.
+Quando o autômato atinge o estado final, a cadeia é considerada aceita e a lista de código de resultado representa os detalhes do reconhecimento. Caso contrário, a cadeia é rejeitada, porém, para se saber até que ponto a cadeia foi reconhecida retorna-se a lista de código de resultado parcial. Esta lista contém os resultados até o momento em que a cadeia foi rejeitada.
 
-Abaixo segue uma simulação de execução do autômato da figura~\ref{fig:adapt1}, para cadeias de entrada contendo cada uma das três situações de erro descritas a pouco. Primeiramente mostra-se a cadeia utilizada para construção do autômato. Esta cadeia representa a consulta ao sistema de busca. Em seguida, entra-se com cadeias para serem processadas pelo autômato, representando trechos de melodias da base de dados. Para cada entrada o autômato retorna a lista de códigos de resultado.
+Abaixo segue uma simulação de execução do autômato da figura~\ref{fig:adapt1}, para cadeias de entrada contendo cada uma das três situações de erro descritas há pouco. Primeiramente mostra-se a cadeia utilizada para construção do autômato. Esta cadeia representa a consulta ao sistema de busca. Em seguida, entra-se com cadeias para serem processadas pelo autômato, representando trechos de melodias da base de dados. Para cada entrada o autômato retorna a lista de códigos de resultado.
 
 \begin{listagem}
 \begin{verbatim}
@@ -445,23 +445,23 @@ Digite:
 
 Uma cadeia ser aceita pelo autômato significa na prática que contornando eventuais situações de erro devidamente isoladas as cadeias são semelhantes. A partir deste momento a lista de códigos de resultados é analisada com o objetivo de mensurar a distância entre as cadeias comparadas.
 
-Para esta análise, dois aspectos são considerados. O primeiro deles é direto e correponde à quantidade de erros observados. Quanto menor o número de erros mais próximas são as cadeias. O segundo aspecto envolve um procedimento mais elaborado. Note que a partir da cadeia que originou o autômato e da lista de códigos de resultados, é possível construir uma cadeia artificial, corrigindo os erros registrados. Assim se, por exemplo, uma nota for omitida, pode-se readicioná-la à cadeia. O objetivo desta reconstrução é possibilitar a aplicação dos métodos numéricos de comparação nota a nota apresentados anteriormente. Principalmente com relação às durações das notas, aspecto que fora desconsiderado nesta nova abordagem até então.
+Para esta análise, dois aspectos são considerados. O primeiro deles é direto e corresponde à quantidade de erros observados. Quanto menor for o número de erros, mais próximas serão as cadeias. O segundo aspecto envolve um procedimento mais elaborado. Note que a partir da cadeia que originou o autômato e da lista de códigos de resultados, é possível construir uma cadeia artificial, corrigindo os erros registrados. Assim se, por exemplo, uma nota for omitida, pode-se adicioná-la de volta à cadeia. O objetivo desta reconstrução é possibilitar a aplicação dos métodos numéricos de comparação nota a nota apresentados anteriormente. Principalmente com relação às durações das notas, aspecto que fora desconsiderado nesta nova abordagem até então.
 
-Algumas considerações são importantes no que tange à reconstrução da cadeia com base nas informações de erros. Para notas trocadas deve-se manter a duração original. Para notas omitidas, estas deverão ser readicionadas com duração zero para que não haja interferência no contorno temporal geral da cadeia. A nota é adicionada somente para alinhar o emparelhamento necessário para a comparação nota a nota. E, por fim, para o o caso de notas adicionadas, estas são retiradas e sua duração é incorporada à nota imediatamente anterior.
+Algumas considerações são importantes no que tange à reconstrução da cadeia com base nas informações de erros. Para notas trocadas deve-se manter a duração original. Para notas omitidas, estas deverão ser adicionadas de volta com duração zero, para que não haja interferência no contorno temporal geral da cadeia. A nota é adicionada somente para alinhar o emparelhamento necessário para a comparação nota a nota. E, por fim, para o caso de notas adicionadas, estas são retiradas e sua duração é incorporada à nota imediatamente anterior.
 
 Com base nestas considerações constrói-se a cadeia corrigida e, executando o procedimento de comparação de durações, consegue-se obter uma nova métrica de distância entre as melodias, desta vez utilizando métodos numéricos e considerando as durações das notas.
 
 \subsection{Critério para avaliar a semelhança entre melodias}
 
-Com o modelo de comparação que foi definido, tem-se algumas métricas para avaliação da semelhança entre melodias. A primeiras delas é se o autômato chegou ou não ao estado final. Outra métrica é representada pela lista de códigos de resultado e, por fim, a distância numérica das durações.
+Com o modelo de comparação que foi definido, tem-se algumas métricas para avaliação da semelhança entre melodias. A primeira delas é a aceitação ou não da cadeia, isto é, se o autômato chegou ou não ao estado final. Outra métrica é representada pela lista de códigos de resultado e, por fim, a distância numérica das durações.
 
-Existe uma relação de importância que cada um destes fatores têm sobre a semelhança global percebida. Porém, a falta de testes massivos impede uma percepção apurada destas importâncias e por conseqüência impossibilita a atribuição de pesos para cada fator.
+Existe uma relação de importância que cada um destes fatores tem sobre a semelhança global percebida. Porém, a falta de testes massivos impede uma percepção apurada destas importâncias e por conseqüência impossibilita a atribuição de pesos para cada fator.
 
-Porém, faz-se necessário definir um critério simples e direto com o objetivo de classificar as correspondencias encotradas. Adotou-se para este fim a contagem dos erros a partir da lista de códigos de resultado. Para as listas parciais (quando a cadeia não é aceita), somou-se à contagem de erros o número de notas que sobraram no momento em que o reconhecimento parou.
+Porém, faz-se necessário definir um critério simples e direto com o objetivo de classificar as correspondências encontradas. Adotou-se para este fim a contagem dos erros a partir da lista de códigos de resultado. Para as listas parciais (quando a cadeia não é aceita), somou-se à contagem de erros o número de notas que sobraram no momento em que o reconhecimento parou.
 
 \subsection{Busca}
 
 Sumarizando o procedimento de busca, temos inicialmente a construção do autômato adaptativo a partir da melodia de entrada quantizada. Em seguida aplica-se o autômato sobre todas as melodias do repositório. Este é aplicado inicialmente à cadeia que corresponde a uma melodia completa. Em seguida, a primeira nota desta cadeia é eliminada e o autômato é aplicado novamente. E assim sucessivamente até que a cadeia torne-se vazia, então parte-se para a próxima melodia do repositório.
 
-Ao longo deste processo, o mecanismo de busca mantém um conjunto com as N melhores correspondências que encontrou, com base no critério definido a pouco. Desta forma, ao final da varredura de todo o repositório, tem-se os resultados da busca.
+Ao longo deste processo, o mecanismo de busca mantém um conjunto com as N melhores correspondências que encontrou, com base no critério definido há pouco. Desta forma, ao final da varredura de todo o repositório, tem-se os resultados da busca.
 

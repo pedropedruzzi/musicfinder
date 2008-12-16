@@ -7,7 +7,7 @@ Na presente seção serão apresentados os diversos conceitos nas quais este trabal
 
 \section{Método dos mínimos quadrados}
 
-O método dos mínimos quadrados é uma técnica matemática de otimização que surgiu no início do século XIX, a partir de necessidade relacionadas a geolocalização. Este método permite encontrar os parâmetros para uma função modelo $f$ de forma a melhor aproximar uma relação entre grandezas. Esta relação é usualmente dada por um conjunto de pares ordenados $(x_i,y_i)$. Neste caso, se imaginarmos que $f(x_i) \approx y_i$, deseja-se ajustar seus parâmetros de modo a minimizar a soma dos quadrados dos erros: $$S = \sum_{i=1}^n (y_i - f(x_i))^2$$
+O método dos mínimos quadrados é uma técnica matemática de otimização que surgiu no início do século XIX, a partir de necessidades relacionadas a geolocalização. Este método permite encontrar os parâmetros para uma função modelo $f$ de forma a melhor aproximar uma relação entre grandezas. Esta relação é usualmente dada por um conjunto de pares ordenados $(x_i,y_i)$. Neste caso, se imaginarmos que $f(x_i) \approx y_i$, deseja-se ajustar seus parâmetros de modo a minimizar a soma dos quadrados dos erros: $$S = \sum_{i=1}^n (y_i - f(x_i))^2$$
 
 A teoria mostra que para o caso em que a função modelo $f$ é linear com relação aos seus parâmetros, a solução para o problema é única e ocorre quando as derivadas parciais do erro quadrático com relação a cada parâmetro é zero. Estas equações resultam em um sistema linear possível e determinado, de forma que a solução pode ser facilmente obtida utilizando os métodos numéricos de resolução de sistemas lineares.
 
@@ -17,7 +17,7 @@ Para um aprofundamento sobre o método dos mínimos quadrados ou sobre métodos de 
 
 O conceito de adaptatividade~\cite{roteiroLTA} está vinculado à característica fundamental que diferencia os assim chamados dispositivos adaptativos dos demais. Um dispositivo adaptativo nada mais é do que um formalismo computacional~\cite{Johnsonbaugh} com capacidade de auto-reconfiguração dinâmica. Como todo formalismo computacional, estes dispositivos tem seu comportamento baseado em um conjunto de regras. A auto-reconfiguração dinâmica significa a possibilidade de estas regras serem modificadas durante a operação do dispositivo.
 
-Na prática, a adaptatividade pode se traduzir de diferentes maneiras. Usualmente, a característica adaptativa é introduzida a dispositivos já definidos, como autômatos finitos, gramáticas, autômatos de pilha, linguagens de programação etc. O que define o comportamento de um autômato finito, por exemplo, é o seu conjunto de estados e suas regras de transição. Portanto, um autômato adaptativo~\cite{Neto94} é como um autômato comum com a direferença que a recepção de um símbolo de entrada, além de ocasionar uma transição de estados, opcionalmente pode disparar uma ação adaptativa que irá modificar as regras de transição e o conjunto de estados.
+Na prática, a adaptatividade pode se traduzir de diferentes maneiras. Usualmente, a característica adaptativa é introduzida a dispositivos já definidos, como autômatos finitos, gramáticas, autômatos de pilha, linguagens de programação etc. O que define o comportamento de um autômato finito, por exemplo, é o seu conjunto de estados e suas regras de transição. Portanto, um autômato adaptativo~\cite{Neto94} é como um autômato comum com a diferença que a recepção de um símbolo de entrada, além de ocasionar uma transição de estados, opcionalmente pode disparar uma ação adaptativa que irá modificar as regras de transição e o conjunto de estados.
 
 A título de exemplo, considere o autômato finito da figura~\ref{fig:a1}.
 
@@ -33,7 +33,7 @@ Este autômato reconhece a linguagem $L=\{ab\}$. Podemos conceber um autômato ada
 	\caption{\label{fig:a2} Configuração do autômato após primeira ação adaptativa}
 \end{figure}
 
-Este novo autômato adaptativo, é capaz de reconhecer a linguagem $L=\{ab,aabb\}$. Pode-se aplicar esta mesma idéia não apenas ao estado $1$ como também para todos os estados ímpares do autômato. Após receber a subcadeia $aaa$, tal autômato assumiria a configuração mostrada na figura~\ref{fig:a3}. Temos então um dispositivo capaz de reconhecer a linguagem livre de contexto definida pela expressão $L=aa^{n}bb^{n}$.
+Este novo autômato adaptativo é capaz de reconhecer a linguagem $L=\{ab,aabb\}$. Pode-se aplicar esta mesma idéia não apenas ao estado $1$ como também para todos os estados ímpares do autômato. Após receber a subcadeia $aaa$, tal autômato assumiria a configuração mostrada na figura~\ref{fig:a3}. Temos então um dispositivo capaz de reconhecer a linguagem livre de contexto definida pela expressão $L=aa^{n}bb^{n}$.
 
 \begin{figure}[htb]
 	\center{\includegraphics{figuras/a3.eps}}

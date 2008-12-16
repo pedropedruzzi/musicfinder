@@ -25,11 +25,11 @@ Com base no arquivo MIDI audível produzido, avalia-se a semelhança com o materia
 
 \end{enumerate}
 
-O objetivo de tal procedimento de testes é verificar a qualidade do processo de extração. Uma vez que o objetivo conceitual da construção de tal processo é avaliar a possibilidade prática de se utilizar amostras audíveis como entrada para sistemas de busca musical, a qualidade deste processo está intimamente relacionada com a possibilidade de se identificar padrões musicais em seus resultados. Ou seja, está reslacionado com a possibilidade de se identificar a música em que foi baseada a reprodução original, a partir da audição do material audível produzido pela extração.
+O objetivo de tal procedimento de testes é verificar a qualidade do processo de extração. Uma vez que o objetivo conceitual da construção de tal processo é avaliar a possibilidade prática de se utilizar amostras audíveis como entrada para sistemas de busca musical, a qualidade deste processo está intimamente relacionada com a possibilidade de se identificar padrões musicais em seus resultados. Ou seja, está relacionado com a possibilidade de se identificar a música em que foi baseada a reprodução original, a partir da audição do material audível produzido pela extração.
 
-Para avaliar esta capacidade, realizamos um teste auditivo com um voluntário com habilidades musicais amadoras. Este voluntário conhecia todas as músicas do repositório e, ouviundo os arquivos MIDI produzidos foi solitado a identificar a qual daquelas musicas o trecho lhe parecia mais semelhante.
+Para avaliar esta capacidade, realizamos um teste auditivo com um voluntário com habilidades musicais amadoras. Este voluntário conhecia todas as músicas do repositório e, ouvindo os arquivos MIDI produzidos foi solicitado a identificar a qual daquelas musicas o trecho lhe parecia mais semelhante.
 
-Em seguida, para aquelas musicas as quais o voluntário não soube identificar ou identificou incorretamente, apresentou-se as amostras de áudio originais com a gravação do assobio. Socitou-se novamente que o voluntário tentasse identificar as músicas.
+Em seguida, para aquelas musicas as quais o voluntário não soube identificar ou identificou incorretamente, foram apresentadas as amostras de áudio originais com a gravação do assobio. Solicitou-se novamente que o voluntário tentasse identificar as músicas.
 
 A tabela~\ref{table:testeAuditivo} sumariza os resultados deste teste.
 
@@ -47,7 +47,7 @@ Música não identificada & 3  \\[1ex]
 \label{table:testeAuditivo}
 \end{table}
 
-A partir destes resultados conclúi-se que a qualidade do procedimento de extração está aceitável.
+A partir destes resultados conclui-se que a qualidade do procedimento de extração está aceitável.
 
 
 \section{Rotinas para manipulação de cadeias}
@@ -86,7 +86,7 @@ Rotina que introduz falhas do tipo retirada ou adição de nota, ao longo da cadei
 \section{Comparação numérica}
 A comparação numérica foi testada utilizando principalmente a rotina que gera perturbações nas cadeias. A partir de uma dada cadeia de notas de referência, gerou-se um conjunto de variações com a introdução de perturbações de intensidade variável. Executou-se o algoritmo de comparação numérica tanto para alturas como para durações, e calculou-se a média dos valores de distância obtidos.
 
-O gráfico da figura ~\ref{fig:comparacaoNumerica} nos mostra uma comparação de durações nota a nota graficamente. Neste gráfico é ilustrada uma comparação entre uma cadeia do acervo e uma cadeia de entrada extraída de uma melodia assobiada. O emparelhamento necessário para este método, torna-se possível a plotagem da distribuição de notas em um plano como o ilustrado. No eixo das abcissas, tem-se a alturas da cadeia do acervo e no eixo das ordenadas as alturas da cadeia de entrada. O algoritmo é análogo ao processo de encontrar a reta neste plano que minimiza um certo critério de erro. Uma vez encontrada esta reta, a idéia de distância está associada à distância total dos pontos à esta reta de aproximação.
+O gráfico da figura~\ref{fig:chart1} nos mostra uma comparação de durações nota a nota graficamente. Neste gráfico é ilustrada uma comparação entre uma cadeia do acervo e uma cadeia de entrada extraída de uma melodia assobiada. O emparelhamento necessário para este método, torna possível a plotagem da distribuição de notas em um plano como o ilustrado. No eixo das abscissas, tem-se a alturas da cadeia do acervo e no eixo das ordenadas as alturas da cadeia de entrada. O algoritmo é análogo ao processo de encontrar a reta neste plano que minimiza um certo critério de erro. Uma vez encontrada esta reta, a idéia de distância está associada à distância total dos pontos a esta reta de aproximação.
 
 \begin{figure}[htb]
 	\center{\includegraphics{figuras/chart1.eps}}
@@ -95,9 +95,9 @@ O gráfico da figura ~\ref{fig:comparacaoNumerica} nos mostra uma comparação de d
 
 \section{Quantização das alturas}
 
-Como foi detalhado no capítulo~\ref{chap:tecnicas}, elaboradou-se um algoritmo para quantizar os valores das alturas das notas, minimizando de forma absoluta o erro de quantização. Para ilustrar este processo, gerou-se uma cadeia com perturbações aleatórias a partir de uma cadeia de referência. Os parâmetros para esta geração foram de $1,5$ semitom para variação fixa e $0,3$ para o desvio-padrão da variação aleatória. Em seguida aplicou-se o processo de quantização absoluta sobre esta.
+Como foi detalhado no capítulo~\ref{chap:tecnicas}, elaborou-se um algoritmo para quantizar os valores das alturas das notas, minimizando de forma absoluta o erro de quantização. Para ilustrar este processo, gerou-se uma cadeia com perturbações aleatórias a partir de uma cadeia de referência. Os parâmetros para esta geração foram de $1,5$ semitom para variação fixa e $0,3$ para o desvio-padrão da variação aleatória. Em seguida aplicou-se o processo de quantização absoluta sobre esta.
 
-O gráfico da figura ~\ref{fig:chart2} mostra as alturas da cadeia em cada uma das etapas deste procedimento. A escala do eixo das ordenadas está na notação MIDI e estão destacados os níveis quantizados. É possível observar que somente três notas ``erradas'' foram geradas.
+O gráfico da figura~\ref{fig:chart2} mostra as alturas da cadeia em cada uma das etapas deste procedimento. A escala do eixo das ordenadas está na notação MIDI e estão destacados os níveis quantizados. É possível observar que somente três notas ``erradas'' foram geradas.
 
 \begin{figure}[htb]
 	\center{\includegraphics{figuras/chart2.eps}}
@@ -123,7 +123,7 @@ Nenhum & 4 \\ [1ex]       % [1ex] adds vertical space
 
 \section{Comparação com autômato adaptativo}
 
-Para testar a capacidade de reconhecimento inexato do autômato adaptativo, escolheu-se uma cadeia de referência e a partir dela produziu-se dez mil cadeias com perturbações de altura. Aplicou-se, então, o autômato sobre este conjunto e obteve-se um percentual médio de aceitação, ou seja, uma representação da efetividade do autômato. Repetiu-se este procedimento para diversos valores do parâmetro de variação aleatória de altura, e com os resultados obtidos, compilou-se a tabela ~\ref{table:efetiv}.
+Para testar a capacidade de reconhecimento inexato do autômato adaptativo, escolheu-se uma cadeia de referência e a partir dela foram geradas dez mil cadeias com perturbações de altura. Aplicou-se, então, o autômato sobre este conjunto e obteve-se um percentual médio de aceitação, ou seja, uma representação da efetividade do autômato. Repetiu-se este procedimento para diversos valores do parâmetro de variação aleatória de altura, e com os resultados obtidos, compilou-se a tabela ~\ref{table:efetiv}.
 
 \begin{table}[ht] \caption{Efetividade do autômato com perturbações}
 \centering
