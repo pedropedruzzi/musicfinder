@@ -18,7 +18,7 @@ Rotina que possibilita a exportação de uma cadeia de notas do formato interno pa
 
 Esta taxa significa a razão entre a soma dos intervalos em que mais de uma nota está ressonando pela soma dos intervalo em que há pelo menos um nota ressonando. Uma baixa taxa de polifonia é um indício de que a trilha é melódica.
 
-\item Extração de subcadeia de uma cadeia
+\item Extração de sub-cadeia de uma cadeia
 
 Rotina simples que isola um trecho de uma cadeia, para viabilizar a realização de experimentos.
 
@@ -26,8 +26,8 @@ Rotina simples que isola um trecho de uma cadeia, para viabilizar a realização d
 
 Esta rotina introduz perturbações parametrizáveis nas alturas e durações da cadeia. Os parâmetros são:
 \begin{description}
-  \item[Variação fixa de altura] Um valor em semitons que será adicionado às alturas da cadeia (transposição tonal fixa).
-  \item[Variação aleatória de altura] O valor do desvio-padrão em semitons de uma variação aleatória de altura a ser introduzida em cada nota.
+  \item[Variação fixa de altura] Um valor em semi-tons que será adicionado às alturas da cadeia (transposição tonal fixa).
+  \item[Variação aleatória de altura] O valor do desvio-padrão em semi-tons de uma variação aleatória de altura a ser introduzida em cada nota.
   \item[Dilatação/contração fixa de durações] Um fator que multiplicará todas as durações da cadeia.
   \item[Variação aleatória de durações] O valor do desvio-padrão de uma variação aleatória de duração a ser introduzida em cada nota.
 \end{description}
@@ -179,7 +179,7 @@ Preparou-se então uma rotina de testes que inicializa o repositório, lê cada um 
 
 A saída da rotina de busca mostra uma lista contendo a melhor correspondência encontrada para cada música do repositório, ordenada pela semelhança (calculada segundo os critérios do item~\ref{sec:semelhanca}). São mostrados também a posição na melodia da música onde ocorreu a correspondência (\emph{start}), a contagem de erros (\emph{err}), a lista de códigos de resultado e a distância numérica das durações das notas das melodias (\emph{distance}).
 
-A listagem a seguir é um exemplo de saída da rotina de busca, recebendo a melodia extraída de um assobio da música \emph{Yesterday} (\emph{The Beatles}).
+A listagem a seguir mostra o início da saída para a melodia extraída de um assobio da música \emph{Yesterday} (\emph{The Beatles}).
 
 \makebox[\textwidth]{\hrulefill}
 \begin{verbatim}
@@ -225,84 +225,11 @@ err = 3
 [OK, EXCHANGE, OK, ADDITION, OK, EXCHANGE]
 distance = 0.015761535349990998
 
-MATCH!
 We Are The Champions
 start = 9
 err = 3
 [OK, EXCHANGE, OK, OK, EXCHANGE, OK, EXCHANGE]
 distance = 0.6035584560535664
-
-País Tropical
-start = 50
-err = 3
-[OK, EXCHANGE, OK, ADDITION, OK, EXCHANGE]
-distance = 0.017968624035241167
-
-Tico Tico No Fubá
-start = 171
-err = 3
-[OK, EXCHANGE, OK, OK, EXCHANGE, OK, EXCHANGE]
-distance = 0.07319050735183884
-
-Você É Linda
-start = 68
-err = 4
-[OK, OMISSION, OK, OK, OMISSION, OK, OMISSION, OK, EXCHANGE, OK]
-distance = 0.07423018991836677
-
-Penny Lane
-start = 76
-err = 103
-[OK, EXCHANGE, OK, OK, OK, EXCHANGE]
-distance = 0.8258801744258808
-
-Hino Do Corinthians
-start = 13
-err = 104
-[OK, OK, OK]
-distance = 0.015410959363391956
-
-Marvin
-start = 57
-err = 104
-[OK, EXCHANGE, OK, EXCHANGE, OK, EXCHANGE]
-distance = 0.02733707742962276
-
-With Or Without You
-start = 93
-err = 104
-[OK, EXCHANGE, OK, EXCHANGE, OK, EXCHANGE]
-distance = 0.056293950647727874
-
-Wave
-start = 24
-err = 104
-[OK, EXCHANGE, OK, EXCHANGE, OK, EXCHANGE]
-distance = 0.0033705159595315967
-
-Hey Jude
-start = 221
-err = 104
-[OK, EXCHANGE, OK, OMISSION, OK, OK, EXCHANGE]
-distance = 1.0200702551195635
-
-Tarde Em Itapoã
-start = 3
-err = 104
-[OK, OMISSION, OK, OK, OK]
-distance = 0.06725528759264139
-
-Sunday Bloody Sunday
-start = 193
-err = 104
-[OK, EXCHANGE, OK, EXCHANGE, OK, EXCHANGE]
-distance = 0.19622750059124283
-
-Happy Birthday To You
-start = 0
-err = 105
-[OK, EXCHANGE, OK]
-distance = 0.015410959363391956
 \end{verbatim}
 \makebox[\textwidth]{\hrulefill}
 

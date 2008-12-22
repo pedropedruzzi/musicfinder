@@ -1,1 +1,30 @@
-\chapter{Análise}
+\chapter{Análise e crítica}
+
+Neste capítulo é feito um breve comentário de duas limitações observadas nos componentes construídos para este trabalho.
+
+\section{Quantização de notas}
+
+Ao analisar os resultados dos dois processos de quantização implementados, observou-se que nenhum dos dois oferece uma qualidade ótima. Ambos tentam lidar com a desafinação do reprodutor, porém as abordagens dadas por estes fazem considerações extremas sobre esta questão. O que sugere que uma abordagem híbrida tenha potencial de apresentar melhores resultados.
+
+O método relativo, por ser baseado na referência apenas da nota anterior, muitas vezes produz melodias com muita divergência com relação a original. Este método acaba por considerar uma oscilação de afinação muito maior do que a observada na reprodução vocal humana, mesmo por amadores.
+
+Analisando reproduções vocais humanas de melodias, observa-se a existência de uma variação aleatória de afinação em cada uma das nota individualmente, proveniente da imprecisão do reprodutor. Por outro lado existe também uma variação progressiva da referência absoluta de afinação, que ocorre de maneira bem mais lenta.
+
+O método de quantização absoluto parte da premissa de que esta variação de referência absoluta não existe. Apesar disso este método apresentou bons resultados na maioria dos casos. Isso pode ser justificado pela duraçao reduzida dos casos testados, pois este efeito tende a aparecer mais significativamente em melodias mais longas. Porém, isto representa uma limitação importante deste método comprovada na prática por alguns casos.
+
+Um método híbrido pode ser idealizado de diversas maneiras. Uma possibilidade é aplicar o método absoluto em trechos de tamanho fixo ao longo da melodia, e utilizar as idéias do método relativo para corrigir a variação da referência absoluta entre estes trechos. Ao aplicar o método absoluto sobre o primeiro trecho obtem-se um offset de correção (entre $-0,5$ e $0,5$ semitom) para este trecho. Este valor é somado no restante da melodia para corrigir a variação de referência. Em seguida o processo se repete para os demais trechos.
+
+Dada esta idéia geral de como seria o método de quantização híbrido, pode-se pensar nos dois métodos implementados como sendo casos particulares deste primeiro. O método relativo é o caso particular em o tamanho do trecho é 1, e o método absoluto é o caso em o tamanho do trecho coincide com o tamanho da melodia inteira.
+
+
+\section{Autômato adaptativo}
+
+Como foi visto, o autômato adaptativo proposto representa um dispositivo reconhecedor de melodias semelhantes àquela que o gerou. Da maneira que foi construído, este dispositivo é capaz de tolerar diversos tipos de variações, inclusive múltiplas, para aceitar melodias. Porém, este sistema de tolerância depende do acerto da primeira nota da melodia que o originou.
+
+Isto ocorre por que o processo utiliza a primeira nota para calcular a transposição tonal e corrigí-las nas demais notas. Por isso a primeira nota é sempre considerada correta. Se eventualmente esta nota estiver errada (caso de troca) com relação ao restante das notas, o autômato gerado não seria capaz de reconhecer a melodia correta, isto é, aquela sem a troca da primeira nota. Isto porque a primeira nota seria considerada correta e todas as demais erradas.
+
+Esta limitação não é trivialmente contornável. Pensou-se em utilizar os intervalos (diferenças) entre as notas como sendo os símbolos do autômato, ao invés das próprias notas. Mas esta representação não resolve o problema pois o autômato não conseguiria decidir entre um caso de troca ou de adição sem calcular a soma dos intervalos, o que seria equivalente ao que é feito atualmente.
+
+Felizmente a maioria das reproduções não apresenta erro logo na primeira nota. E a utilização de um método de quantização híbrido evitaria ainda mais a possibilidade de ocorrência destes casos.
+
+
